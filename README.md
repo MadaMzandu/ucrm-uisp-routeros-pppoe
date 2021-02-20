@@ -1,9 +1,10 @@
 # UISP/UCRM REST API for Mikrotik PPPoE
 
-This software is a REST PHP script intended to provide integration between
-UISP/UCRM billing system and Mikrotik RouterOS devices for provisioning PPPoE
-services. This software does not use the plugin extensibility of UISP but
-instead it uses the native webhook feature to create real time provisioning.
+This software is a REST PHP solution intended to integrate the UISP/UCRM billing
+system with Mikrotik RouterOS devices for provisioning PPPoE service accounts.
+Unlike other integration options this solution does not use the plugin
+extensibility of UISP instead it uses the native webhook facility to allow real
+time provisioning.
 
 It is recommended to use the latest UISP/UCRM version available.
 
@@ -38,7 +39,7 @@ It is recommended to use the latest UISP/UCRM version available.
 
 \# \> json/ipaddr.json
 
-1.  Generate new IP addresses using provided “ipgen” script - command:
+5.  Generate new IP addresses using provided “ipgen” script - command:
 
 \# ./ipgen 10.85.1
 
@@ -46,7 +47,7 @@ It is recommended to use the latest UISP/UCRM version available.
 
 >   *Run command as many times to append /24's to the address pool*
 
-1.  Remember to secure API url with access list especially if running on a
+5.  Remember to secure API url with access list especially if running on a
     publicly accessible webserver
 
 ## On Mikrotik RouterOs Device/s
@@ -72,7 +73,7 @@ It is recommended to use the latest UISP/UCRM version available.
 3.  Make sure endpoint url has ending “/” e.g. http://127.0.0.1:8080/api/ to
     avoid Apache/Nginx redirection.
 
-4.  Disable SSL checking of endpoit if using self signed certificate or pure
+4.  Disable SSL checking of endpoint if using self signed certificate or pure
     http
 
 5.  Test the webhook by clicking the test button. Response should return a json
@@ -87,10 +88,12 @@ It is recommended to use the latest UISP/UCRM version available.
 
     PPPoE Site Name
 
-7\. I recommend disabling the client visibility of the PPPoE attributes
+7.  Disabling the client visibility of the PPPoE attributes is a good
+    recommendation
 
-6\. If you prefer to name these attributes differently, you must edit the
-corresponding config.php entries.
+8.  If one prefers to name these custom attributes differently, the corresponding
+    config.php entries must be updated to reflect the new labels. Review the
+    attribute key property that is sent in the webhook event.
 
 # Usage
 
@@ -119,7 +122,7 @@ corresponding config.php entries.
 Commercial remote installation assistance is available.
 
 Requirements – Ubuntu 18.04 or 20.04 with Public IP address for remote
-installation only.
+installation only, Apache with modphp or Nginx with php-fpm.
 
 # Credits
 
