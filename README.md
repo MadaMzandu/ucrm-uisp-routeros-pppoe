@@ -1,91 +1,139 @@
-# UISP/UCRM webhook API for Mikrotik PPPoE
+# UISP/UCRM REST API for Mikrotik PPPoE
 
-This software is intended to integrate UISP/UCRM billing software with Mikrotik
-RouterOS devices to provision PPPoE based services.
+This software is a REST PHP script intended to provide integration between
+UISP/UCRM billing system and Mikrotik RouterOS devices for provisioning PPPoE
+services. This software does not use the plugin extensibility of UISP but
+instead it uses the native webhook feature to create real time provisioning.
 
-It is recommended to use the latest UISP/UCRM version available
+It is recommended to use the latest UISP/UCRM version available.
 
 # Features:
 
-1\. Supports multiple routeros gateways
+1.  Supports multiple RouterOS devices as gateways
 
-2\. Provides real time account creation
+2.  Provides real time creation of service accounts
 
-3\. Provides time suspending / unsuspending of accounts
+3.  Provides real time suspending / unsuspending (this should be an English
+    word) of service accounts
 
-4\. Provides real time migration between profiles
+4.  Provides real time migration of service accounts between profiles
 
-5\. Allows real time migration of accounts between devices
+5.  Allows real time migration of accounts between gateway devices
 
-6\. Has self-managed IP address pool allowing persistent ip addressing versus the
-dynamic pool on the routeros devices
+6.  Has self-managed IP address pool allowing persistent IP address assignment
+    which is more practical for monitoring client devices than using the dynamic
+    IP pool on the RouterOS devices
 
 # Installation Instructions
 
 ## On Web Server
 
-1\. Install files into a path or a virtualhost on web server
+1.  Install files into a path or a virtualhost on PHP enabled web server
 
-2\. Configure mikrotik username and password in config.php
+2.  Configure RouterOs username and password in config.php
 
-3\. Configure site to ip address mappings in ‘json/gateways.json’
+3.  Map site names to IP addresses in ‘json/gateways.json’
 
-4\. Clear the ip address pool of test addresses - command:
+4.  Clean the IP address pool of default IP addresses - command:
 
 \# \> json/ipaddr.json
 
-5\. Generate new ip addresses - command:
+1.  Generate new IP addresses using provided “ipgen” script - command:
 
 \# ./ipgen 10.85.1
 
-run command as many times to append /24's to the address pool
+>   *This command will generate 10.85.1.0/24 into the pool.*
 
-6\. Remember to secure url with access list permitting UISP host address
+>   *Run command as many times to append /24's to the address pool*
 
-## On Mikrotik Device/s
+1.  Remember to secure API url with access list especially if running on a
+    publicly accessible webserver
 
-1\. Create ppp profiles matching the names of UCRM service plans including spaces
-if any
+## On Mikrotik RouterOs Device/s
 
-2\. Create profile named ‘disabled’ according to your disabling policy.
+1.  Create PPP profiles matching the names of UCRM service plans (including
+    spaces if any)
 
-3\. Create api username and password that was configured in config.php.
+2.  Create a profile named ‘disabled’ according to your disabling policy.
 
-4\. Limit api account access to ip address of your webserver for security
+3.  Create API username and password that was configured on the webserver in
+    config.php.
+
+4.  Remember to limit API account access to IP address of your webserver. Can’t
+    be too secure.
 
 ## On UISP
 
-1\. In CRM Settings \>\> Webhook create an endpoint with the url to the above
-webserver path
+1.  In CRM Settings \>\> Webhook create an endpoint with the url to the above
+    webserver path
 
-2\. Make sure endpoint url has ending “/” e.g. http://127.0.0.1:8080/api/ to
-avoid redirection.
+2.  Specify only the service related webhook event types for this endpoint.
 
-3\. Disable ssl checking if using self signed certificateor http
+3.  Make sure endpoint url has ending “/” e.g. http://127.0.0.1:8080/api/ to
+    avoid Apache/Nginx redirection.
 
-4\. Test the webhook by clicking the test button. Response should acknowledge the
-hook.
+4.  Disable SSL checking of endpoit if using self signed certificate or pure
+    http
 
-5\. In CRM Settings \>\> Other create 3 x text Custom Attributes of service type
-as follows:
+5.  Test the webhook by clicking the test button. Response should return a json
+    response acknowledging the hook.
 
-PPPoE Username
+6.  In CRM Settings \>\> Other create three text Custom Attributes of service
+    type as follows:
 
-PPPoE Password
+    PPPoE Username
 
-PPPoE Site Name
+    PPPoE Password
+
+    PPPoE Site Name
 
 7\. I recommend disabling the client visibility of the PPPoE attributes
 
 6\. If you prefer to name these attributes differently, you must edit the
 corresponding config.php entries.
 
-# Notes on Usage
+# Usage
 
-1\. At this point you should be able to add a service and provision the pppoe
-account at the bottom.
+1.  At this point you should be able to add a service and provision the pppoe
+    account details at the bottom of the service account
 
-2\. If you forget to provision the PPPoE account during service creation the
-webhook will have no pppoe credentials and will fail.
+2.  You are required to provide the PPPoE details when adding the service. If
+    you forget to provide PPPoE account details the webhook will fail and you
+    have to delete the new service and add it again to correct. We hope UISP
+    will include a “required” option for custom attributes in the future
 
-3\. Review the webhook review log until you are confident of your setup and usage
+3.  Review the webhook request logs until you are confident of your setup and
+    usage
+
+4.  Some webhook requests such as archiving are not applicable to the setup and
+    will fail. This is normal behaviour.
+
+5.  Webhooks will fail if you run out of IP addresses in the pool with relevant
+    message
+
+6.  You can resend webhooks that fail to provision the first time e.g. Web
+    server was down or IP addresses were depleted when account was provisioned
+
+# Commercial Assistance
+
+Commercial remote installation assistance is available.
+
+Requirements – Ubuntu 18.04 or 20.04 with Public IP address for remote
+installation only.
+
+# Credits
+
+This software uses or depends on the following software by these developers with
+gratitude.
+
+Ben Menking – RouterOS API
+
+<https://github.com/BenMenking/routeros-api>
+
+Ubiquiti - UISP/UCRM/UNMS
+
+<https://ubnt.com>
+
+Mikrotik - RouterOS
+
+<https://mikrotik.com>
