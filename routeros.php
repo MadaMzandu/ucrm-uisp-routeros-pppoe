@@ -3,6 +3,31 @@ require('routeros_api.class.php');
 require('ipaddr.php');
 $conf = include('config.php');
 
+function ros_recall_site(&$obj){
+  global $conf ;
+  $filename = $conf->entity_ids_file;
+  $file = strtolower(file_get_contents($filename));
+  $site = '';
+  if($file){
+    $ids = json_decode($file);
+    if(property_exists($ids,$obj->id))
+      $site =  $ids->{$obj->id} ;
+  }
+  $obj->{$conf->pppoe_site_attr} = $site;
+}
+
+function ros_save_site(&$obj){
+  global $conf ;
+  $filename = $conf->entity_ids_file;
+  $ids = new StdClass();
+  $file = strtolower(file_get_contents($filename));
+  if($file)$ids = json_decode($file);
+  $ids->{$obj->id} = $obj->{$conf->pppoe_site_attr};
+  $json = json_encode($ids);
+  file_put_contents($filename,$json);
+  return true ;
+}
+
 function ros_resolve_site($site){
   global $conf ;
   $file = strtolower(file_get_contents($conf->gateways_file));
@@ -47,7 +72,7 @@ function ros_disconnect(&$obj){
 
 function ros_ifexists(&$obj){
   global $conf ;
-  $account = $obj->{$conf->pppoe_user_attr} ;
+  $id = $obj->id  ;
   $ret = ros_resolve_site($obj->{$conf->pppoe_site_attr});
   if(!$ret[0]) return $ret ;
   $gate = $ret[1];
@@ -56,7 +81,7 @@ function ros_ifexists(&$obj){
   //$api->debug = true ;
   if ($api->connect($gate, $conf->api_user, $conf->api_pass)) {
     $api->write('/ppp/secret/print',false);
-    $api->write('?name=' . $account);
+    $api->write('?comment=' . $id);
     $read = $api->read();
     $api->disconnect();
     if(sizeof($read) > 0){
@@ -68,7 +93,7 @@ function ros_ifexists(&$obj){
 
 function ros_edit(&$obj){
   global $conf ;
-  $id = $obj->last->{$conf->pppoe_user_attr} ;
+  $id = $obj->update->id ;
   $name = $obj->update->{$conf->pppoe_user_attr} ;
   $pass = $obj->update->{$conf->pppoe_pass_attr};
   $profile = $obj->update->profile ;
@@ -83,6 +108,7 @@ function ros_edit(&$obj){
       $api->write('/ppp/secret/set',false);
       $api->write('=.id=' . $id,false );
       $api->write('=name=' . $name,false);
+      $api->write('=comment=' . $id,false);
       $api->write('=password=' . $pass,false);
       $api->write('=profile=' . $profile);
       $read = $api->read();
@@ -109,17 +135,22 @@ function ros_add(&$obj){
       'name' => $obj->{$conf->pppoe_user_attr},
       'password' => $obj->{$conf->pppoe_pass_attr},
       'profile' => $obj->profile,
+      'comment' => $obj->id,
       'remote-address' => $ip,
     ));
     $api->disconnect();
-    if(is_string($r))return [true,'account added'];
+    if(is_string($r)){
+      ros_save_site($obj);
+      return [true,'account added'];
+    }
   }
   return [false,$r['!trap'][0]['message']];
 }
 
 function ros_delete(&$obj){
   global $conf ;
-  $account = $obj->{$conf->pppoe_user_attr} ;
+  $id = $obj->id  ;
+  var_dump($id);
   $ret = ros_resolve_site($obj->{$conf->pppoe_site_attr});
   if(!$ret[0]) return $ret ;
   $gate = $ret[1];
@@ -128,14 +159,14 @@ function ros_delete(&$obj){
   // $api->debug = true ;
   if ($api->connect($gate, $conf->api_user, $conf->api_pass)) {
     $api->write('/ppp/secret/print',false);
-    $api->write('?name=' . $account);
+    $api->write('?comment=' . $id);
     $user = $api->read();
     if(sizeof($user) < 1) {
       $api->disconnect();
-      return [false,'account not found'];
+      return [true,'account already deleted'];
     }
     $api->write('/ppp/secret/remove',false);
-    $api->write('=.id=' . $account);
+    $api->write('=.id=' . $id);
     $read = $api->read();
     $api->disconnect() ;
     if(sizeof($read) > 0) return [false,'account not deleted'];
@@ -159,7 +190,7 @@ function ros_enable(&$obj,$bool){
   //$api->debug = true ;
   if ($api->connect($gate, $conf->api_user, $conf->api_pass)) {
       $api->write('/ppp/secret/set',false);
-      $api->write('=.id=' . $obj->{$conf->pppoe_user_attr},false );
+      $api->write('=.id=' . $obj->id,false );
       $api->write('=profile=' . $profile);
       $read = $api->read();
       $api->disconnect();

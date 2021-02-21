@@ -33,12 +33,12 @@ if($data->entity == 'webhook'){
 }
 // no custom attributes in object
 if(!$data->extraData->entity->attributes)
-	exit(http_response(false,'object has no pppoe attributes'));
+  exit(http_response(true,'no pppoe attributes no problem'));
 
 //configure custom attributes
 $pppoe = include('pppoe.php');
 $type = $data->changeType ;
-
+$pppoe->update->id = $pppoe->last->id = $data->entityId ;
 $pppoe->update->profile = $data->extraData->entity->servicePlanName ;
 $pppoe->update->status = $data->extraData->entity->status ;
 foreach($data->extraData->entity->attributes as $attribute){
@@ -46,8 +46,7 @@ foreach($data->extraData->entity->attributes as $attribute){
 }
 //empty username
 if(!$pppoe->update->{$conf->pppoe_user_attr})
-  //strlen(!$pppoe->update->{$conf->pppoe_user_attr}) < 1)
-    exit(http_response(false,'request has no pppoe username'));
+  exit(http_response(false,'cant do no pppoe username'));
 
 if($data->extraData->entityBeforeEdit){
   foreach($data->extraData->entityBeforeEdit->attributes as $attribute){
@@ -83,13 +82,20 @@ if($type == 'insert'){
 
 if($type == 'edit'){
   $stat = array();
- if($pppoe->update->{$conf->pppoe_site_attr} !=
-    $pppoe->last->{$conf->pppoe_site_attr}){ // site has changed
+  ros_recall_site($pppoe->last);
+  $exists = ros_ifexists($pppoe->last);  
+  if($exists && strtolower($pppoe->update->{$conf->pppoe_site_attr}) !=
+    strtolower($pppoe->last->{$conf->pppoe_site_attr})){ // site has changed
       $stat = ros_add($pppoe->update); // move to new site
       $stat = ros_delete($pppoe->last); //delete from old site
-  }else{
+  }elseif($exists){
     $stat = ros_edit($pppoe) ; //normal edit
   }
+  elseif(!$exists){   // account does not exist add
+  if($pppoe->update->{$conf->pppoe_user_attr} == 
+    $pppoe->last->{$conf->pppoe_user_attr}) //not 
+      $stat = ros_add($pppoe->update);
+  }  
   if($stat[0]) exit(http_response(true,$stat[1]));
   exit(http_response(false,$stat[1]));
 }
