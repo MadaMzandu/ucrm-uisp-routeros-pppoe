@@ -126,7 +126,9 @@ It is recommended to use the latest UISP/UCRM version available.
 
 Commercial remote installation assistance is available.
 
-Requirements – Ubuntu 18.04 or 20.04 with Public IP address for remote
+<https://columbus-inet-services.company.site/UISP-UCRM-Mikrotik-PPPoE-Integration-p300849115>
+
+Requirements – Ubuntu 20.04 with Public IP address for remote
 installation only, Apache with modphp or Nginx with php-fpm.
 
 # Credits
