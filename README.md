@@ -39,7 +39,7 @@ It is recommended to use the latest UISP/UCRM version available.
 
 \# \> json/ipaddr.json
 
-1.  Generate new IP addresses using provided “ipgen” script - command:
+5.  Generate new IP addresses using provided “ipgen” script - command:
 
 \# ./ipgen 10.85.1
 
@@ -50,7 +50,7 @@ It is recommended to use the latest UISP/UCRM version available.
 >   *This gift horse command will only consume an ipv4 /24 in x.x.x notation so
 >   be warned.*
 
-1.  Remember to secure API url with access list especially if running on a
+6.  Remember to secure API url with access list especially if running on a
     publicly accessible webserver
 
 ## On Mikrotik RouterOs Device/s
@@ -130,7 +130,7 @@ installation only, Apache with modphp or Nginx with php-fpm.
 # Credits
 
 This software uses or depends on the following software by these developers with
-gratitude.
+the greatest gratitude.
 
 Ben Menking – RouterOS API
 
