@@ -39,7 +39,7 @@ It is recommended to use the latest UISP/UCRM version available.
 
 \# \> json/ipaddr.json
 
-5.  Generate new IP addresses using provided “ipgen” script - command:
+1.  Generate new IP addresses using provided “ipgen” script - command:
 
 \# ./ipgen 10.85.1
 
@@ -47,7 +47,10 @@ It is recommended to use the latest UISP/UCRM version available.
 
 >   *Run command as many times to append /24's to the address pool*
 
-5.  Remember to secure API url with access list especially if running on a
+>   *This gift horse command will only consume an ipv4 /24 in x.x.x notation so
+>   be warned.*
+
+1.  Remember to secure API url with access list especially if running on a
     publicly accessible webserver
 
 ## On Mikrotik RouterOs Device/s
@@ -91,19 +94,19 @@ It is recommended to use the latest UISP/UCRM version available.
 7.  Disabling the client visibility of the PPPoE attributes is a good
     recommendation
 
-8.  If one prefers to name these custom attributes differently, the corresponding
-    config.php entries must be updated to reflect the new labels. Review the
-    attribute key property that is sent in the webhook event.
+8.  If one prefers to name these custom attributes differently, the
+    corresponding config.php entries must be updated to reflect the new labels.
+    Review the attribute key property that is sent in the webhook event.
 
 # Usage
 
 1.  At this point you should be able to add a service and provision the pppoe
     account details at the bottom of the service account
 
-2.  You are required to provide the PPPoE details when adding the service. If
-    you forget to provide PPPoE account details the webhook will fail and you
-    have to delete the new service and add it again to correct. We hope UISP
-    will include a “required” option for custom attributes in the future
+2.  PPPoE secrets are provisioned with a comment which helps to track the CRM
+    assigned service id. This is because the webhook does not send the previous
+    state of custom attributes. Do not edit these comments to avoid orphaned
+    accounts.
 
 3.  Review the webhook request logs until you are confident of your setup and
     usage
