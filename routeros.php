@@ -3,6 +3,18 @@ require('routeros_api.class.php');
 require('ipaddr.php');
 $conf = include('config.php');
 
+function ros_del_id($idno){
+  global $conf ;
+  $filename = $conf->entity_ids_file;
+  $file = strtolower(file_get_contents($filename));
+  if($file){
+    $ids = json_decode($file);
+    unset($ids->{$idno});
+    $json = json_encode($ids);
+    file_put_contents($filename,$json);
+  }
+}
+
 function ros_recall_site(&$obj){
   global $conf ;
   $filename = $conf->entity_ids_file;
@@ -172,6 +184,7 @@ function ros_delete(&$obj){
     if(sizeof($read) > 0) return [false,'account not deleted'];
     ros_disconnect($obj);
     ip_release($user[0]['remote-address']);
+    ros_del_id($id);
     return [true,'account has been deleted'];
   }
   return [false,'connection failed'];

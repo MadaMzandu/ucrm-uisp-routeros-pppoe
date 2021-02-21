@@ -20,7 +20,8 @@ function ip_release($ip){
 function ip_issue(){
   global $conf ;
   $file = file_get_contents($conf->ip_addr_file);
-  $ips = json_decode($file);
+  $ips = new StdClass();
+  if($file)$ips = json_decode($file);
   $check = true ;
   $i = 0 ;
   $issue = '';

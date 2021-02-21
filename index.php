@@ -86,14 +86,12 @@ if($type == 'edit'){
   $exists = ros_ifexists($pppoe->last);  
   if($exists && strtolower($pppoe->update->{$conf->pppoe_site_attr}) !=
     strtolower($pppoe->last->{$conf->pppoe_site_attr})){ // site has changed
-      $stat = ros_add($pppoe->update); // move to new site
       $stat = ros_delete($pppoe->last); //delete from old site
+      $stat = ros_add($pppoe->update); // add to new site
   }elseif($exists){
     $stat = ros_edit($pppoe) ; //normal edit
   }
   elseif(!$exists){   // account does not exist add
-  if($pppoe->update->{$conf->pppoe_user_attr} == 
-    $pppoe->last->{$conf->pppoe_user_attr}) //not 
       $stat = ros_add($pppoe->update);
   }  
   if($stat[0]) exit(http_response(true,$stat[1]));
