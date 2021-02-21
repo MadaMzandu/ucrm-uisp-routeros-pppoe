@@ -33,13 +33,15 @@ It is recommended to use the latest UISP/UCRM version available.
 
 2.  Configure RouterOs username and password in config.php
 
-3.  Map site names to IP addresses in ‘json/gateways.json’
+3.  Make the json directory and contents writeable by your www user.
 
-4.  Clean the IP address pool of default IP addresses - command:
+4.  Map site names to IP addresses in ‘json/gateways.json’
+
+5.  Clean the IP address pool of default IP addresses - command:
 
 \# \> json/ipaddr.json
 
-5.  Generate new IP addresses using provided “ipgen” script - command:
+6.  Generate new IP addresses using provided “ipgen” script - command:
 
 \# ./ipgen 10.85.1
 
