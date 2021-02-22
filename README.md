@@ -1,10 +1,10 @@
 # UISP/UCRM REST API for Mikrotik PPPoE
 
-This is a REST PHP script created to integrate the Ubiquit UISP/UCRM billing
-system with Mikrotik RouterOS devices for provisioning PPPoE service accounts.
-Unlike other integration options this solution does not use the plugin
-extensibility of UISP instead it uses the native webhook facility to allow real
-time provisioning.
+This is a REST PHP script aimed at integrating the Ubiquiti UISP/UCRM billing
+system with Mikrotik RouterOS devices for PPPoE services. Unlike other 
+integration options this solution does not use the plugin extensibility of 
+UISP but instead it uses the native webhook facility to provide real time 
+account provisioning.
 
 It is recommended to use the latest UISP/UCRM version available.
 
@@ -15,11 +15,11 @@ It is recommended to use the latest UISP/UCRM version available.
 2.  Provides real time creation of service accounts
 
 3.  Provides real time suspending / unsuspending (this should be an English
-    word) of service accounts
+    word) of service accounts.
 
-4.  Provides real time migration of service accounts between profiles
+4.  Provides real time migration of service accounts between service plans.
 
-5.  Allows real time migration of accounts between gateway devices
+5.  Allows real time migration of accounts between gateway devices.
 
 6.  Has self-managed IP address pool allowing persistent IP address assignment
     which is more practical for monitoring client devices than using the dynamic
