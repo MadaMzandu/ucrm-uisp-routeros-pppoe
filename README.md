@@ -52,7 +52,7 @@ It is recommended to use the latest UISP/UCRM version available.
 >   *This gift horse command will only consume an ipv4 /24 in x.x.x notation so
 >   be warned.*
 
-6.  Remember to secure API url with access list especially if running on a
+7.  Remember to secure API url with access list especially if running on a
     publicly accessible webserver
 
 ## On Mikrotik RouterOs Device/s
@@ -98,17 +98,18 @@ It is recommended to use the latest UISP/UCRM version available.
 
 8.  If one prefers to name these custom attributes differently, the
     corresponding config.php entries must be updated to reflect the new labels.
-    Review the attribute key property that is sent in the webhook event.
+    Review the attribute key property that is sent in the webhook event. Recommend 
+    to skip this until setup is confirmed to be working.
 
 # Usage
 
 1.  At this point you should be able to add a service and provision the pppoe
-    account details at the bottom of the service account
+    account details at the bottom of the service account page.
 
 2.  PPPoE secrets are provisioned with a comment which helps to track the CRM
-    assigned service id. This is because the webhook does not send the previous
-    state of custom attributes. Do not edit these comments to avoid orphaned
-    accounts.
+    assigned service id. This is because in some cases the webhook does not send the 
+    previous state of custom attributes. Do not edit these comments to avoid 
+    orphaned accounts.
 
 3.  Review the webhook request logs until you are confident of your setup and
     usage
@@ -122,7 +123,7 @@ It is recommended to use the latest UISP/UCRM version available.
 6.  You can resend webhooks that fail to provision the first time e.g. Web
     server was down or IP addresses were depleted when account was provisioned
 
-# Commercial Assistance
+# Commercial Installation Assistance
 
 Commercial remote installation assistance is available.
 
