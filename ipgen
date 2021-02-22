@@ -3,22 +3,27 @@
 if(sizeof($argv) < 2){
   echo "\n";
   echo "Description: Generates 254 ip addresses from specified prefix\n";
-  echo "Usage: ./ipgen ip_addr_prefix\n";
+  echo "Usage: ./ipgen x.x.x\n";
   echo "Example: ./ipgen 10.99.4\n";
-  echo "Result: this will generate 254 addresses from 10.99.4.0/24\n";
-  echo "Warning: do not reuse a prefix to avoid duplicate addresses\n";
+  echo "This will generate 254 addresses from 10.99.4.0/24\n";
+  echo "A backup of the address pool is saved with a bak extension in\n";
+  echo "case something goes wrong\n" ;
+  echo "This script has no error checking yet.\n";
   echo "\n";
   exit();
 }
 
 $conf = include('config.php');
 $prefix = $argv[1];
-$file=file_get_contents($conf->ip_addr_file);
+$filename = $conf->ip_addr_file ;
+$file = '{}';
+if(file_exists($filename))
+  $file=file_get_contents($filename);
 $ips = json_decode($file,true);
 
-for($i=1;$i < 254; $i++){
+for($i=1;$i < 255; $i++){
   $ips[] = array ('ip' => $prefix . "." . $i, 'used' => false);
 }
 $json = json_encode($ips);
+if(file_exists($filename))copy($filename,$filename . '.bak');
 file_put_contents($conf->ip_addr_file,$json);
-
