@@ -114,11 +114,11 @@ It is recommended to use the latest UISP/UCRM version available.
 3.  Review the webhook request logs until you are confident of your setup and
     usage
 
-4.  Some webhook requests such as archiving are not applicable to the setup and
-    will fail. This is normal behaviour.
+4.  Some webhook requests are not applicable to the setup and will fail. This 
+    is normal behaviour.
 
-5.  Webhooks will fail if you run out of IP addresses in the pool with relevant
-    message
+5.  Webhooks will fail with relevant message if you run out of IP addresses in 
+    the pool.
 
 6.  You can resend webhooks that fail to provision the first time e.g. Web
     server was down or IP addresses were depleted when account was provisioned
