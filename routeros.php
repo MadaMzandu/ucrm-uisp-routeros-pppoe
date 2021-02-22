@@ -184,7 +184,7 @@ function ros_delete(&$obj){
     if(sizeof($read) > 0) return [false,'account not deleted'];
     ros_disconnect($obj);
     ip_release($user[0]['remote-address']);
-    ros_del_id($id);
+    ros_del_id($user[0]['comment']);
     return [true,'account has been deleted'];
   }
   return [false,'connection failed'];
