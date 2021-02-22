@@ -87,11 +87,11 @@ It is recommended to use the latest UISP/UCRM version available.
 6.  In CRM Settings \>\> Other create three text Custom Attributes of service
     type as follows:
 
-    PPPoE Username
+\# \>    PPPoE Username
 
-    PPPoE Password
+\# \>    PPPoE Password
 
-    PPPoE Site Name
+\# \>    PPPoE Site Name
 
 7.  Disabling the client visibility of the PPPoE attributes is a good
     recommendation
