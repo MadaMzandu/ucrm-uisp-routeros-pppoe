@@ -7,8 +7,7 @@ function ip_release($ip){
   if(!$file) return false ;
   $ips = json_decode($file);
   foreach($ips as $thisone){
-    $address = $thisone->ip ;
-    if($ip != $address) continue ;
+    if($ip != $thisone->ip) continue ;
     $thisone->used = false;
     break ;
   }
@@ -20,8 +19,8 @@ function ip_release($ip){
 function ip_issue(){
   global $conf ;
   $file = file_get_contents($conf->ip_addr_file);
-  $ips = new StdClass();
-  if($file)$ips = json_decode($file);
+  if(!$file) return [false,'could not read ip pool'];
+  $ips = json_decode($file);
   $issue = '';
   foreach($ips as $thisone){
     if($thisone->used) continue ;
@@ -29,12 +28,12 @@ function ip_issue(){
     $issue = $thisone->ip ;
     break ;
   }
-  if(strlen($issue > 0)){
-    $json = json_encode($ips);
-    file_put_contents($conf->ip_addr_file,$json);
-    return [true,$issue] ;
-  }
-  return [false,"no ip addresses available"];
+  if(strlen($issue < 1))
+    return [false,"no ip addresses available"];
+  $json = json_encode($ips);
+  file_put_contents($conf->ip_addr_file,$json);
+  return [true,$issue] ;
 }
 
 ?>
+

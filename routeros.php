@@ -3,37 +3,39 @@ require('routeros_api.class.php');
 require('ipaddr.php');
 $conf = include('config.php');
 
-function ros_del_id($idno){
+function ros_del_id($id){
   global $conf ;
   $filename = $conf->entity_ids_file;
+  if(!file_exists($filename)) return false ;
   $file = strtolower(file_get_contents($filename));
-  if($file){
-    $ids = json_decode($file);
-    unset($ids->{$idno});
-    $json = json_encode($ids);
-    file_put_contents($filename,$json);
-  }
+  if(!$file) return false ;
+  $ids = json_decode($file);
+  unset($ids->{$id});
+  $json = json_encode($ids);
+  file_put_contents($filename,$json);
+  return true ;
 }
 
 function ros_recall_site(&$obj){
   global $conf ;
   $filename = $conf->entity_ids_file;
+  if(!file_exists($filename)) return false ;
   $file = strtolower(file_get_contents($filename));
   $site = '';
-  if($file){
-    $ids = json_decode($file);
-    if(property_exists($ids,$obj->id))
-      $site =  $ids->{$obj->id} ;
-  }
-  $obj->{$conf->pppoe_site_attr} = $site;
+  if(!$file) return false ;
+  $ids = json_decode($file);
+  if(!property_exists($ids,$obj->id)) return false ;
+  $obj->{$conf->pppoe_site_attr} = $ids->{$obj->id} ;
+  return true ;   
 }
 
 function ros_save_site(&$obj){
   global $conf ;
   $filename = $conf->entity_ids_file;
-  $ids = new StdClass();
-  $file = strtolower(file_get_contents($filename));
-  if($file)$ids = json_decode($file);
+  $file = '{}';
+  if(file_exists($filename))
+    $file = strtolower(file_get_contents($filename));
+  $ids = json_decode($file);
   $ids->{$obj->id} = $obj->{$conf->pppoe_site_attr};
   $json = json_encode($ids);
   file_put_contents($filename,$json);
@@ -42,15 +44,20 @@ function ros_save_site(&$obj){
 
 function ros_resolve_site($site){
   global $conf ;
-  $file = strtolower(file_get_contents($conf->gateways_file));
+  $filename = $conf->gateways_file;
+  if(!file_exists($filename)) 
+    return [false,'gateway mapping file not found'];
+  $file = 
+    strtolower(file_get_contents($conf->gateways_file));
+  if(!$file) $file = '{}';
   $gates = json_decode($file);
-  $ip = 'no ip address defined for this site';
+  $message = 'no ip address defined for this site';
   $ret = false ;
   if(property_exists($gates,strtolower($site))){
-     $ip = $gates->{strtolower($site)};
+     $message = $gates->{strtolower($site)};
      $ret = true ;
   }
-  return [$ret,$ip];
+  return [$ret,$message];
 }
 
 
