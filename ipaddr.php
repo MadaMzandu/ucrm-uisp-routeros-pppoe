@@ -22,8 +22,6 @@ function ip_issue(){
   $file = file_get_contents($conf->ip_addr_file);
   $ips = new StdClass();
   if($file)$ips = json_decode($file);
-  $check = true ;
-  $i = 0 ;
   $issue = '';
   foreach($ips as $thisone){
     if($thisone->used) continue ;
