@@ -84,7 +84,7 @@ function ros_disconnect(&$obj){
 
 function ros_ifexists(&$obj){
   global $conf ;
-  $id = $obj->id  ;
+  $id = $obj->{$conf->pppoe_user_attr}  ;
   $ret = ros_resolve_site($obj->{$conf->pppoe_site_attr});
   if(!$ret[0]) return $ret ;
   $gate = $ret[1];
@@ -93,7 +93,7 @@ function ros_ifexists(&$obj){
   //$api->debug = true ;
   if ($api->connect($gate, $conf->api_user, $conf->api_pass)) {
     $api->write('/ppp/secret/print',false);
-    $api->write('?comment=' . $id);
+    $api->write('?name=' . $id);
     $read = $api->read();
     $api->disconnect();
     if(sizeof($read) > 0){
@@ -161,7 +161,7 @@ function ros_add(&$obj){
 
 function ros_delete(&$obj){
   global $conf ;
-  $id = $obj->id  ;
+  $id = $obj->{$conf->pppoe_user_attr}  ;
   var_dump($id);
   $ret = ros_resolve_site($obj->{$conf->pppoe_site_attr});
   if(!$ret[0]) return $ret ;
@@ -171,7 +171,7 @@ function ros_delete(&$obj){
   // $api->debug = true ;
   if ($api->connect($gate, $conf->api_user, $conf->api_pass)) {
     $api->write('/ppp/secret/print',false);
-    $api->write('?comment=' . $id);
+    $api->write('?name=' . $id);
     $user = $api->read();
     if(sizeof($user) < 1) {
       $api->disconnect();
@@ -203,7 +203,7 @@ function ros_enable(&$obj,$bool){
   //$api->debug = true ;
   if ($api->connect($gate, $conf->api_user, $conf->api_pass)) {
       $api->write('/ppp/secret/set',false);
-      $api->write('=.id=' . $obj->id,false );
+      $api->write('=.id=' . $obj->{$conf->pppoe_user_attr},false );
       $api->write('=profile=' . $profile);
       $read = $api->read();
       $api->disconnect();
@@ -217,3 +217,4 @@ function ros_enable(&$obj,$bool){
 }
 
 ?>
+

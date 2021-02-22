@@ -74,6 +74,10 @@ if(!in_array($type,array('insert','edit')))
 
 
 if($type == 'insert'){
+  $stat = array();
+  if(ros_ifexists($pppoe->update)){
+    $stat = ros_delete($pppoe->update);
+  }
   $stat = ros_add($pppoe->update);
   if($stat[0])exit(
     http_response(true,$stat[1]));
@@ -99,4 +103,5 @@ if($type == 'edit'){
 }
 
 ?>
+
 
