@@ -1,6 +1,6 @@
 # UISP/UCRM REST API for Mikrotik PPPoE
 
-This software is a REST PHP solution intended to integrate the UISP/UCRM billing
+This is a REST PHP script created to integrate the Ubiquit UISP/UCRM billing
 system with Mikrotik RouterOS devices for provisioning PPPoE service accounts.
 Unlike other integration options this solution does not use the plugin
 extensibility of UISP instead it uses the native webhook facility to allow real
