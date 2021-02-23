@@ -116,7 +116,7 @@ function ros_edit(&$obj){
   $name = $obj->update->{$conf->pppoe_user_attr} ;
   $pass = $obj->update->{$conf->pppoe_pass_attr};
   $profile = $obj->update->profile ;
-  if($obj->update->status != 1) $profile = 'disabled'; // disable profile if status disabled
+  if($obj->update->status != 1) $profile = $conf->pppoe_disabled_profile ; // disable profile if status disabled
   $ret = ros_resolve_site($obj->update->{$conf->pppoe_site_attr});
   if(!$ret[0]) return $ret ;
   $gate = $ret[1];
@@ -141,7 +141,7 @@ function ros_edit(&$obj){
 function ros_add(&$obj){
   global $conf ;
   $ret = ip_issue();
-  if($obj->status != 1)$obj->profile = 'disabled'; //disable profile if status disabled
+  if($obj->status != 1)$obj->profile = $conf->pppoe_disabled_profile; //disable profile if status disabled
   if(!$ret[0]) return $ret ;
   $ip = $ret[1];
   $ret = ros_resolve_site($obj->{$conf->pppoe_site_attr});
@@ -201,7 +201,8 @@ function ros_enable(&$obj,$bool){
   global $conf ;
   $profile = $obj->profile ;
   $message = 'enabled';
-  if(!$bool) $profile = $message = 'disabled';
+  if(!$bool){ $profile = $conf->pppoe_disabled_profile; 
+    $message = 'disabled';}
   $ret = ros_resolve_site($obj->{$conf->pppoe_site_attr});
   if(!$ret[0]) return $ret ;
   $gate = $ret[1];
@@ -224,4 +225,3 @@ function ros_enable(&$obj,$bool){
 }
 
 ?>
-
