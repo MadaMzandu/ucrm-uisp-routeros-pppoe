@@ -61,6 +61,7 @@ It is recommended to use the latest UISP/UCRM version available.
     spaces if any)
 
 2.  Create a profile named ‘disabled’ according to your disabling policy.
+    You can also change the name of the disabled profile in config.php.
 
 3.  Create API username and password that was configured on the webserver in
     config.php.
