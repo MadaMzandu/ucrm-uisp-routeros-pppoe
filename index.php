@@ -19,21 +19,25 @@ function http_response($bool,$message){
 $body = file_get_contents('php://input');
 
 //body is empty
-if(is_null($body)){
+if(!$body){
  exit(http_response(false,'request has no body'));
 }
 $data = json_decode($body);
+//request object has no update data
+if(!$data->extraData->entity){
+  exit(http_response(false,'data not found in request'));
+}
+// no custom attributes in object
+if(!$data->extraData->entity->attributes)
+  exit(http_response(true,'no pppoe account configured'));
 // request object not a service
 if(!in_array($data->entity,array('service','webhook'))){
-  exit(http_response(false,'request object is not a service'));
+  exit(http_response(false,'request is not a service'));
 }
 // test webhook
 if($data->entity == 'webhook'){
   exit (http_response(true,'test webhook acknowledged'));
 }
-// no custom attributes in object
-if(!$data->extraData->entity->attributes)
-  exit(http_response(true,'no pppoe attributes no problem'));
 
 //configure custom attributes
 $pppoe = include('pppoe.php');
@@ -46,7 +50,7 @@ foreach($data->extraData->entity->attributes as $attribute){
 }
 //empty username
 if(!$pppoe->update->{$conf->pppoe_user_attr})
-  exit(http_response(false,'cant do no pppoe username'));
+  exit(http_response(false,'no pppoe username defined'));
 
 if($data->extraData->entityBeforeEdit){
   foreach($data->extraData->entityBeforeEdit->attributes as $attribute){
@@ -102,5 +106,3 @@ if($type == 'edit'){
 }
 
 ?>
-
-
