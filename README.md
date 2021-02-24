@@ -60,7 +60,8 @@ It is recommended to use the latest UISP/UCRM version available.
 1.  Create PPP profiles matching the names of UCRM service plans (including
     spaces if any)
 
-2.  Create a profile named ‘disabled’ according to your disabling policy. Or edit config.php to change the name of the disabled profile.
+2.  Create a profile named ‘disabled’ according to your disabling policy. Or 
+    edit config.php to change the name of the disabled profile.
 
 3.  Create API username and password that was configured on the webserver in
     config.php.
