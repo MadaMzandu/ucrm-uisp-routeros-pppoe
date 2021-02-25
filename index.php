@@ -1,5 +1,4 @@
 <?php
-//
 header('content-type: application/json');
 require('routeros.php');
 $conf = include('config.php');
