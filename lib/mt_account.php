@@ -4,6 +4,15 @@ include_once 'cs_ipv4.php';
 
 class MT_Account extends MT {
 
+    public function upgrade() {
+        $this->data->actionObj = 'before';
+        if ($this->delete()) {
+            $this->data->actionObj = 'entity';
+            $this->insert();
+            $this->set_message('service id:' . $this->entity->id . ' was up-down-graded');
+        }
+    }
+
     public function move() {
         if ($this->insert()) {
             $this->data->actionObj = 'before';
@@ -53,10 +62,10 @@ class MT_Account extends MT {
     }
 
     public function delete() {
-        $id = $this->data->entityId;
+        $id = $this->{$this->data->actionObj}->id;
         if ($this->write(false, 'remove')) {
             $this->set_message('service id:' . $id . ' was deleted');
-            if ($this->data->changeType == 'delete') {
+            if (in_array($this->data->changeType,['delete','upgrade'])) {
                 $this->clear();
             }
             return true;
@@ -65,7 +74,7 @@ class MT_Account extends MT {
     }
 
     protected function ip_get($device = false) {
-        if(in_array($this->data->changeType,['edit','move'])){
+        if (in_array($this->data->changeType, ['edit', 'move'])) {
             $db = new CS_SQLite();
             return $db->get_val($this->entity->id, 'address');
         }
@@ -92,5 +101,5 @@ class MT_Account extends MT {
         $db = new CS_SQLite();
         $db->delete($this->entity->id);
     }
- 
+
 }

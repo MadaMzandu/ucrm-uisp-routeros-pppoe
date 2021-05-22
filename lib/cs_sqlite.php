@@ -21,6 +21,10 @@ class CS_SQLite{
         $this->db->exec($this->prep_insert());
     }
     
+    public function upgrade($data,$table='services'){
+        $this->insert($data,$table);
+    }
+    
     public function exists($col,$val,$table='services'){
         $sql = 'select id from '.$table.
                 ' where '.$col."='".$val."'" ;

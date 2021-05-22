@@ -123,7 +123,7 @@ class MT {
         if (!$api) {
             return false;
         }
-        $id = $this->data->entityId;
+        $id = $this->{$this->data->actionObj}->id;
         $api->write($this->path . 'print', false);
         $api->write('?comment=' . $id);
         $this->result = $api->read();

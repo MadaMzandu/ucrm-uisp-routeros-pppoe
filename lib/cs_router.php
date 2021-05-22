@@ -94,7 +94,7 @@ class CS_Router {
         $this->set_custom_attr();
         if (in_array($this->data->changeType, ['insert'])) {
             if(isset($this->data->extraData->entityBeforeEdit)){
-                $this->changeType = "upgrade";
+                $this->data->changeType = 'upgrade';
             }
         }
         if (in_array($this->data->changeType, ['end'])) {
