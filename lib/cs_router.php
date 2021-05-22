@@ -92,24 +92,40 @@ class CS_Router {
 
     private function sanitize() {
         $this->set_custom_attr();
+        $this->sanitize_insert();
+        $this->sanitize_end();
+        $this->sanitize_suspend();
+        $this->sanitize_edit();
+    }
+
+    private function sanitize_insert() {
         if (in_array($this->data->changeType, ['insert'])) {
-            if(isset($this->data->extraData->entityBeforeEdit)){
+            if (isset($this->data->extraData->entityBeforeEdit)) {
                 $this->data->changeType = 'upgrade';
             }
         }
+    }
+
+    private function sanitize_end() {
         if (in_array($this->data->changeType, ['end'])) {
             $this->data->changeType = 'delete';
         }
+    }
+
+    private function sanitize_edit() {
+        if (in_array($this->data->changeType, ['edit'])) {
+            if ($this->check_exists()) {
+                $this->check_device_move();
+            }
+        }
+    }
+
+    private function sanitize_suspend() {
         if (in_array($this->data->changeType, ['suspend', 'unsuspend'])) {
             $this->data->unsuspendFlag = false;
             if ($this->data->changeType == 'unsuspend') {
                 $this->data->unsuspendFlag = true;
                 $this->data->changeType = 'suspend';
-            }
-        }
-        if (in_array($this->data->changeType, ['edit'])) {
-            if ($this->check_exists()) {
-                $this->check_device_move();
             }
         }
     }
