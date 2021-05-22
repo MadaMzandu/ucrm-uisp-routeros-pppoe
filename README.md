@@ -15,10 +15,13 @@ valuable input.
 # Introdution
 
 This is a REST PHP script aimed at integrating the Ubiquiti UISP/UCRM billing
-system with Mikrotik RouterOS devices for PPPoE services. Unlike other 
-integration options this solution does not use the plugin extensibility of 
-UISP but instead it uses the native webhook facility to provide real time 
-account provisioning.
+system with Mikrotik RouterOS devices for PPPoE and static DHCP services.
+Static DHCP means the client can only get a lease if the MAC address is 
+defined on the gateway network device.
+
+Unlike other integration options this solution does not use the plugin 
+extensibility of UISP but instead it uses the native webhook facility to provide 
+real time account provisioning.
 
 It is recommended to use the latest UISP/UCRM version available.
 
