@@ -1,4 +1,18 @@
-# UISP/UCRM REST API for Mikrotik PPPoE
+# UISP/UCRM REST API for Mikrotik PPPoE + Static DHCP
+
+Many thanks to all the people that are testing and providing feeback. Because
+of your input we are making progress. This branch includes some of your
+valuable input.
+
+# New Features
+
+1. Now supports static DHCP as well as PPPoE.
+
+2. Now has a backend for IP Management and future capabilities
+
+3. Now understands ipv4 cidr prefixes so pools can be defined in x.x.x.x/xx notation.
+
+# Introdution
 
 This is a REST PHP script aimed at integrating the Ubiquiti UISP/UCRM billing
 system with Mikrotik RouterOS devices for PPPoE services. Unlike other 
@@ -27,32 +41,33 @@ It is recommended to use the latest UISP/UCRM version available.
 
 # Installation Instructions
 
+## Backup Old Configuration
+
+If upgrading from the legacy version backup the json directory so that you can
+roll back if something goes wrong.
+
+## PHP Dependancies
+
+The following php dependancies are required, on ubuntu/debian:
+
+\# sudo apt install php-sqlite3 php-curl
+
 ## On Web Server
 
 1.  Install files into a path or a virtualhost on PHP enabled web server
 
 2.  Configure RouterOs username and password in config.php
 
-3.  Make the json directory and contents writeable by your www user.
+3.  Make the the data directory and contents writeable by your www user.
 
-4.  Map site names to IP addresses in ‘json/gateways.json’
+4.  Map device names to IP addresses in ‘json/devices.json’ and
 
-5.  Clean the IP address pool of default IP addresses - command:
+5.  Add dhcp address ranges for each device. You can add any number of comma 
+    separated x.x.x.x/xx prefixes. PPPoE address pool is in 
+    json/pppoe_pool.json. You can also add any number of x.x.x.x/xx prefixes
+    for pppoe.
 
-\# \> json/ipaddr.json
-
-6.  Generate new IP addresses using provided “ipgen” script - command:
-
-\# ./ipgen 10.85.1
-
->   *This command will generate 10.85.1.0/24 into the pool.*
-
->   *Run command as many times to append /24's to the address pool*
-
->   *This gift horse command will only consume an ipv4 /24 in x.x.x notation so
->   be warned.*
-
-7.  Remember to secure API url with access list especially if running on a
+6.  Remember to secure API url with access list especially if running on a
     publicly accessible webserver
 
 ## On Mikrotik RouterOs Device/s
@@ -60,7 +75,7 @@ It is recommended to use the latest UISP/UCRM version available.
 1.  Create PPP profiles matching the names of UCRM service plans (including
     spaces if any)
 
-2.  Create a profile named ‘disabled’ according to your disabling policy. 
+2.  Create a PPP profile named ‘disabled’ according to your disabling policy. 
     You can also edit config.php to change the name of the disabled profile.
 
 3.  Create API username and password that was configured on the webserver in
@@ -92,12 +107,16 @@ It is recommended to use the latest UISP/UCRM version available.
 
 >    *PPPoE Password*
 
->    *PPPoE Site Name*
+>    *Device Name*
 
-7.  Disabling the client visibility of the PPPoE attributes is a good
+7.  For dhcp also add:
+
+>     *DHCP MAC Address*
+
+8.  Disabling the client visibility of the PPPoE attributes is a good
     recommendation
 
-8.  If one prefers to name these custom attributes differently, the
+9.  If one prefers to name these custom attributes differently, the
     corresponding config.php entries must be updated to reflect the new labels.
     Review the attribute key property that is sent in the webhook event. Recommend 
     to skip this until setup is confirmed to be working.
@@ -105,9 +124,9 @@ It is recommended to use the latest UISP/UCRM version available.
 # Usage
 
 1.  At this point you should be able to add a service and provision the pppoe
-    account details at the bottom of the service account page.
+    account or DHCP leaese details at the bottom of the service account page.
 
-2.  PPPoE secrets are provisioned with a comment which helps to track the CRM
+2.  Accounts are provisioned with a comment which helps to track the CRM
     assigned service id. This is because in some cases the webhook does not send the 
     previous state of custom attributes. Do not edit these comments to avoid 
     orphaned accounts.
@@ -130,7 +149,7 @@ Commercial remote installation assistance is available.
 
 <https://columbus-inet-services.company.site/UISP-UCRM-Mikrotik-PPPoE-Integration-p300849115>
 
-Requirements – Ubuntu 20.04 with Public IP address for remote
+Requirements – Ubuntu 18.04/20.04 + remote access for installation
 installation only, Apache with modphp or Nginx with php-fpm.
 
 # Credits
