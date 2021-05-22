@@ -133,17 +133,20 @@ The following php dependancies are required, on ubuntu/debian:
     assigned service id. This is because in some cases the webhook does not send the 
     previous state of custom attributes. Do not edit these comments to avoid 
     orphaned accounts.
+    
+3.  Provision one of PPPoE or DHCP and NOT both per service. If both PPPoE username 
+    and DHCP mac address are entered, only DHCP will be provisioned.
 
-3.  Review the webhook request logs until you are confident of your setup and
+4.  Review the webhook request logs until you are confident of your setup and
     usage
 
-4.  Some webhook requests are not applicable to the setup and will fail. This 
+5.  Some webhook requests are not applicable to the setup and will fail. This 
     is normal behaviour.
 
-5.  Webhooks will fail with relevant message if you run out of IP addresses in 
+6.  Webhooks will fail with relevant message if you run out of IP addresses in 
     the pool.
 
-6.  You can resend webhooks that fail to provision the first time e.g. Web
+7.  You can resend webhooks that fail to provision the first time e.g. Web
     server was down or IP addresses were depleted when account was provisioned
 
 # Commercial Installation Assistance
