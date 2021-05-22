@@ -19,7 +19,7 @@ system with Mikrotik RouterOS devices for PPPoE and static DHCP services.
 Static DHCP means the client can only get a lease if the MAC address is 
 defined on the gateway network device.
 
-Unlike other integration options this solution does not use the plugin 
+Unlike other integration options this solution does NOT use the plugin 
 extensibility of UISP but instead it uses the native webhook facility to provide 
 real time account provisioning.
 
