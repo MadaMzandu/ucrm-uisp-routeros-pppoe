@@ -54,10 +54,10 @@ class CS_Router {
     private function check_attrbs() {
         global $conf;
         $attrbs = $this->get_attrbs();
-        if(!in_array($this->data->changeType,['insert','edit','end',
-            'suspend','unsuspend'])){
+        if (!in_array($this->data->changeType, ['insert', 'edit', 'end',
+                    'suspend', 'unsuspend'])) {
             $this->set_message('ok');
-            return false ;
+            return false;
         }
         if (!isset($attrbs->{$conf->device_name_attr})) {
             $this->set_error('network device property not configured');
@@ -92,6 +92,11 @@ class CS_Router {
 
     private function sanitize() {
         $this->set_custom_attr();
+        if (in_array($this->data->changeType, ['insert'])) {
+            if(isset($this->data->extraData->entityBeforeEdit)){
+                $this->changeType = "upgrade";
+            }
+        }
         if (in_array($this->data->changeType, ['end'])) {
             $this->data->changeType = 'delete';
         }
