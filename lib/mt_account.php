@@ -99,7 +99,7 @@ class MT_Account extends MT {
 
     protected function clear() {
         $db = new CS_SQLite();
-        $db->delete($this->entity->id);
+        $db->delete($this->{$this->data->actionObj}->id);
     }
 
 }
