@@ -59,7 +59,7 @@ The following php dependancies are required, on ubuntu/debian:
 
 1.  Install files into a path or a virtualhost on PHP enabled web server
 
-2.  Configure RouterOs username and password in config.php
+2.  Configure RouterOs username and password in lib/config.php
 
 3.  Make the the data directory and contents writeable by your www user.
 
