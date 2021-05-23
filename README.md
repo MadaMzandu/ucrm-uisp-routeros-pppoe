@@ -1,8 +1,8 @@
 # UISP/UCRM REST API for Mikrotik PPPoE + Static DHCP
 
 Many thanks to all the people that are testing and providing feeback. Because
-of your input we are making progress. This branch includes some of your
-valuable input.
+of your input we are making progress. This branch is the next version of this 
+plugin and includes your valuable input.
 
 # New Features
 
@@ -92,18 +92,16 @@ The following php dependancies are required, on ubuntu/debian:
 1.  In CRM Settings \>\> Webhook create an endpoint with the url to the above
     webserver path
 
-2.  Specify only the service related webhook event types for this endpoint.
-
-3.  Make sure endpoint url has ending “/” e.g. http://127.0.0.1:8080/api/ to
+2.  Make sure endpoint url has ending “/” e.g. http://127.0.0.1:8080/api/ to
     avoid Apache/Nginx redirection.
 
-4.  Disable SSL checking of endpoint if using self signed certificate or pure
+3.  Disable SSL checking of endpoint if using self signed certificate or pure
     http
 
-5.  Test the webhook by clicking the test button. Response should return a json
+4.  Test the webhook by clicking the test button. Response should return a json
     response acknowledging the hook.
 
-6.  In CRM Settings \>\> Other create three text Custom Attributes of service
+5.  In CRM Settings \>\> Other create three text Custom Attributes of service
     type as follows:
 
 >    *PPPoE Username*
@@ -112,17 +110,15 @@ The following php dependancies are required, on ubuntu/debian:
 
 >    *Device Name*
 
-7.  For dhcp also add:
+6.  If you require dhcp provisioning as well then also add:
 
 >     *DHCP MAC Address*
 
-8.  Disabling the client visibility of the PPPoE attributes is a good
-    recommendation
+7.  Disabling the client visibility of the Custom attributes is a good
+    idea.
 
-9.  If one prefers to name these custom attributes differently, the
+8.  If one prefers to name these custom attributes differently, the
     corresponding config.php entries must be updated to reflect the new labels.
-    Review the attribute key property that is sent in the webhook event. Recommend 
-    to skip this until setup is confirmed to be working.
 
 # Usage
 
@@ -156,7 +152,7 @@ Commercial remote installation assistance is available.
 <https://columbus-inet-services.company.site/UISP-UCRM-Mikrotik-PPPoE-Integration-p300849115>
 
 Requirements – Ubuntu 18.04/20.04 + remote access for installation
-installation only, Apache with modphp or Nginx with php-fpm.
+, Apache with modphp or Nginx with php-fpm.
 
 # Credits
 
