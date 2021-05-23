@@ -49,7 +49,7 @@ It is recommended to use the latest UISP/UCRM version available.
 If upgrading from the legacy version backup the json directory so that you can
 roll back if something goes wrong.
 
-## PHP Dependancies
+## PHP Dependencies
 
 The following php dependancies are required, on ubuntu/debian:
 
