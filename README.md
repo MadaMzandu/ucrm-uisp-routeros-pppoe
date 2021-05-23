@@ -75,11 +75,15 @@ The following php dependancies are required, on ubuntu/debian:
 
 ## On Mikrotik RouterOs Device/s
 
+### For PPPoE
+
 1.  Create PPP profiles matching the names of UCRM service plans (including
     spaces if any)
 
 2.  Create a PPP profile named ‘disabled’ according to your disabling policy. 
     You can also edit config.php to change the name of the disabled profile.
+
+### For PPPoE and/or DHCP
 
 3.  Create API username and password that was configured on the webserver in
     config.php.
