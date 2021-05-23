@@ -65,7 +65,7 @@ class MT_Account extends MT {
         $id = $this->{$this->data->actionObj}->id;
         if ($this->write(false, 'remove')) {
             $this->set_message('service id:' . $id . ' was deleted');
-            if (in_array($this->data->changeType,['delete','upgrade'])) {
+            if (in_array($this->data->changeType, ['delete', 'upgrade'])) {
                 $this->clear();
             }
             return true;
@@ -74,12 +74,16 @@ class MT_Account extends MT {
     }
 
     protected function ip_get($device = false) {
-        if (in_array($this->data->changeType, ['edit', 'move'])) {
+        $addr = null;
+        if ($this->data->changeType == 'insert' ||
+                ($this->data->changeType == 'move' &&
+                $this->data->mode == 'DHCP')) {
+            $ip = new CS_IPv4();
+            $addr = $ip->assign($device);  // acquire new address
+        } else {
             $db = new CS_SQLite();
-            return $db->get_val($this->entity->id, 'address');
+            $addr = $db->get_val($this->entity->id, 'address'); //reuse old address
         }
-        $ip = new CS_IPv4();
-        $addr = $ip->assign($device);
         if (!$addr) {
             $this->set_error('no ip addresses to assign');
             return false;

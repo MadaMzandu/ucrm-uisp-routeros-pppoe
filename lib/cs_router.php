@@ -30,7 +30,9 @@ class CS_Router {
         $this->sanitize();
 
         //select module
-        $module = 'MT_' . $this->module() . '_Account';
+        $this->data->mode = $this->module();
+        $module = 'MT_'.$this->data->mode.'_Account';
+        
 
         // execute
         $service = new $module($this->data);
