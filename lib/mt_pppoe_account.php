@@ -50,7 +50,7 @@ class MT_PPPoE_Account extends MT_Account {
         $id = $this->entity->id;
         $action = 'suspended';
         $data->{$this->disableProperty} = $conf->disabled_profile;
-        if ($this->data->suspendFlag) {
+        if ($this->data->unsuspendFlag) {
             $action = 'unsuspended';
             $data->{$this->disableProperty} = $this->entity->servicePlanName;
         }

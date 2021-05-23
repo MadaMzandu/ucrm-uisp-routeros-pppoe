@@ -82,20 +82,19 @@ class CS_Router {
 
     private function module() {
         global $conf;
-        $module = 'PPPoE';
-        if (filter_var($this->data->extraData->entity->{$conf->mac_addr_attr},
-                        FILTER_VALIDATE_MAC)) { //mac address is valid
-            $module = 'DHCP';
+        if (isset($this->data->extraData->entity->{$conf->mac_addr_attr})) {
+            if (filter_var($this->data->extraData->entity->{$conf->mac_addr_attr},
+                            FILTER_VALIDATE_MAC)) { //mac address is valid
+                return 'DHCP';
+            }
         }
-        return $module;
+        return 'PPPoE';
     }
 
     private function sanitize() {
         $this->set_custom_attr();
-        $this->sanitize_insert();
-        $this->sanitize_end();
-        $this->sanitize_suspend();
-        $this->sanitize_edit();
+        $sanitize = 'sanitize_' . $this->data->changeType;
+        $this->$sanitize();
     }
 
     private function sanitize_insert() {
@@ -118,6 +117,10 @@ class CS_Router {
                 $this->check_device_move();
             }
         }
+    }
+    
+    private function sanitize_unsuspend(){
+        $this->sanitize_suspend();
     }
 
     private function sanitize_suspend() {
