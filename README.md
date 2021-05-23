@@ -1,7 +1,7 @@
 # UISP/UCRM REST API for Mikrotik PPPoE + Static DHCP
 
 Many thanks to all the people that are testing and providing feeback. Because
-of your input we are making progress. This branch is the next version of this 
+of your input progress is being made. This branch is the next version of this 
 plugin and includes your valuable input.
 
 # New Features
