@@ -1,5 +1,7 @@
 
 test.php
+lib/cs_uisp.php
+lib/cs_uisp_service.php
 nbproject/project.xml
 nbproject/project.properties
 nbproject/private/private.xml
