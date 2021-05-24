@@ -1,14 +1,15 @@
 <?php
 
-class CS_Uisp {
+class CS_UISP {
 
     const API_URL = 'https://localhost/api/v1.0';
     const APP_KEY = '11ce2a09-6eb7-44f8-9a68-2d6cac30776a';
 
-    private $ch;
-    private $method;
-    private $post;
-    private $url;
+    protected $ch;
+    protected $method;
+    protected $post;
+    protected $url;
+    protected $data ;
 
     /**
      * @param string $url
@@ -17,7 +18,7 @@ class CS_Uisp {
      *
      * @return array|null
      */
-    public function http_request($url, $method = 'GET', $post = []) {
+    public function request($url, $method = 'GET', $post = []) {
         $this->method = strtoupper($method);
         $this->ch = curl_init();
         $this->post = $post;

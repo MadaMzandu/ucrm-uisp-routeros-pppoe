@@ -5,20 +5,18 @@ include_once 'cs_ipv4.php';
 class MT_Account extends MT {
 
     public function upgrade() {
+        $this->move();
+    }
+
+    public function move() {
         $this->data->actionObj = 'before';
         if ($this->delete()) {
             $this->data->actionObj = 'entity';
             $this->insert();
-            $this->set_message('service id:' . $this->entity->id . ' was up-down-graded');
+            $this->set_message('service id:' . $this->entity->id . ' was migrated');
+            return ;
         }
-    }
-
-    public function move() {
-        if ($this->insert()) {
-            $this->data->actionObj = 'before';
-            $this->delete();
-            $this->set_message('service id:' . $this->entity->id . ' was moved');
-        }
+        $this->set_error('unable to delete old service');
     }
 
     public function edit() {
@@ -65,7 +63,7 @@ class MT_Account extends MT {
         $id = $this->{$this->data->actionObj}->id;
         if ($this->write(false, 'remove')) {
             $this->set_message('service id:' . $id . ' was deleted');
-            if (in_array($this->data->changeType, ['delete', 'upgrade'])) {
+            if (in_array($this->data->changeType, ['delete', 'move','upgrade'])) {
                 $this->clear();
             }
             return true;
@@ -73,16 +71,14 @@ class MT_Account extends MT {
         return false;
     }
 
-    protected function ip_get($device = false) {
+    protected function ip_get($device=false) {
         $addr = null;
-        if ($this->data->changeType == 'insert' ||
-                ($this->data->changeType == 'move' &&
-                $this->data->mode == 'DHCP')) {
+        if (in_array($this->data->changeType,['insert','move','upgrade'])) {
             $ip = new CS_IPv4();
             $addr = $ip->assign($device);  // acquire new address
         } else {
             $db = new CS_SQLite();
-            $addr = $db->get_val($this->entity->id, 'address'); //reuse old address
+            $addr = $db->get_val($this->before->id, 'address'); //reuse old address
         }
         if (!$addr) {
             $this->set_error('no ip addresses to assign');
