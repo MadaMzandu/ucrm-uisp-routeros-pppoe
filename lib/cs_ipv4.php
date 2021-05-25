@@ -54,13 +54,34 @@ Class CS_IPv4 {
         return false;
     }
 
+    private function exclusions() { //needs regex check
+        $f = new CS_File('dhcp_excl');
+        $list = $f->read();
+        $addr = [];
+        foreach ($list as $entry) {
+            [$start, $end] = explode('-', $entry, 2);
+            if (!$end) {
+                $end = $start;
+            }
+            $s = ip2long($start);
+            $e = ip2long($end);
+            for ($i = $s; $i < $e + 1; $i++) {
+                $addr[] = $i;
+            }
+            return $addr;
+        }
+        return null;
+    }
+
     private function iterate_range() {
-        global $conf ;
         $hosts = $this->hosts();
         $net = ip2long($this->network()); //net_number2dec
         $db = new CS_SQLite();
-        $e = $conf->dhcp_exclude;
-        for ($i = $net + $e + 1; $i < $net + $hosts - 1; $i++) {
+        $excl = $this->exclusions();
+        for ($i = $net + 1; $i < $net + $hosts - 1; $i++) {
+            if(in_array($i, $excl)){
+                continue;
+            }
             $addr = long2ip($i);
             $lastoct = explode('.', $addr)[3];
             if ($lastoct < 1 || $lastoct > 254) { // skip zeros and 255s
@@ -72,7 +93,7 @@ Class CS_IPv4 {
             $this->addr = $addr;
             return true;
         }
-        return false ;
+        return false;
     }
 
     private function network() { //ok here we go

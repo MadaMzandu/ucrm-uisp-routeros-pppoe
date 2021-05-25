@@ -41,6 +41,7 @@ class CS_File {
         $this->paths = (object) array(
                     'ppp' => $conf->ppp_pool_file,
                     'devices' => $conf->devices_file,
+                    'dhcp_excl' => $conf->dhcp_excl_file,
         );
     }
 

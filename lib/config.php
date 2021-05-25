@@ -13,10 +13,10 @@ return (object) array(
   'ids_file' => 'json/ids.json',  // used to map service id to device name
   'ppp_pool_file' => 'json/ppp_pool.json', //ppp address pool 
   'data_path' => 'data', //path for data store
+  'dhcp_excl_file' => 'json/dhcp_excl.json', //list of addresses for dhcp exclusion
 
 //disabled profile or address-list
   'disabled_profile' => 'disabled', // name of profile/list for disabled accounts
-  'dhcp_exclude' => 0,              // number of address to skip from each dhcp pool
  
 // custom attributes
   'pppoe_user_attr' => 'pppoeUsername',  
