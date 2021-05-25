@@ -12,6 +12,8 @@ plugin and includes your valuable input.
 
 3. Now understands ipv4 cidr prefixes so pools can be defined in x.x.x.x/xx notation.
 
+4. Now has a work around fix for adjusting unsuspend date.
+
 # Introdution
 
 This is a REST PHP script aimed at integrating the Ubiquiti UISP/UCRM billing

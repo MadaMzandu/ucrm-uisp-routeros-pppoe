@@ -17,7 +17,7 @@ return (object) array(
 
 //disabled profile or address-list
   'disabled_profile' => 'disabled', // name of profile/list for disabled accounts
-  'unsuspend_date_fix' => true,        // correct next billing date when unsuspending
+  'unsuspend_date_fix' => false,        // correct next billing date when unsuspending
   'unsuspend_fix_wait' => 5,       // seconds - default unless uisp server latency is high
     
 // custom attributes
