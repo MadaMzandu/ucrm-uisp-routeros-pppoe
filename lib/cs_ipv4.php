@@ -54,23 +54,33 @@ Class CS_IPv4 {
         return false;
     }
 
-    private function exclusions() { //needs regex check
+    private function exclusions() { 
         $f = new CS_File('dhcp_excl');
         $list = $f->read();
         $addr = [];
         foreach ($list as $entry) {
-            [$start, $end] = explode('-', $entry, 2);
-            if (!$end) {
-                $end = $start;
+            $entry .= '-';              //append hyphen incase of single addr entry
+            [$start, $last] = explode('-', $entry, 2);
+            if (!$last) {
+                $last = $start;
             }
-            $s = ip2long($start);
-            $e = ip2long($end);
-            for ($i = $s; $i < $e + 1; $i++) {
-                $addr[] = $i;
+            $end = str_replace('-','', $last); //remove hyphen now useless
+            if (filter_var($start, FILTER_VALIDATE_IP) &&
+                    filter_var($end, FILTER_VALIDATE_IP)) {
+                $addr = array_merge($addr,$this->iterate_excl($start, $end));
             }
-            return $addr;
         }
-        return null;
+        return $addr;
+    }
+
+    private function iterate_excl($start, $end) {
+        $addr = [];
+        $s = ip2long($start);
+        $e = ip2long($end);
+        for ($i = $s; $i < $e + 1; $i++) {
+            $addr[] = $i;
+        }
+        return $addr;
     }
 
     private function iterate_range() {
@@ -79,7 +89,7 @@ Class CS_IPv4 {
         $db = new CS_SQLite();
         $excl = $this->exclusions();
         for ($i = $net + 1; $i < $net + $hosts - 1; $i++) {
-            if(in_array($i, $excl)){
+            if (in_array($i, $excl)) {
                 continue;
             }
             $addr = long2ip($i);
