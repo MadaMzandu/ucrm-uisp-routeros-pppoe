@@ -16,7 +16,8 @@ return (object) array(
 
 //disabled profile or address-list
   'disabled_profile' => 'disabled', // name of profile/list for disabled accounts
-  
+  'dhcp_exclude' => 0,              // number of address to skip from each dhcp pool
+ 
 // custom attributes
   'pppoe_user_attr' => 'pppoeUsername',  
   'pppoe_pass_attr' => 'pppoePassword',

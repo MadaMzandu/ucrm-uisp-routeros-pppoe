@@ -55,13 +55,15 @@ Class CS_IPv4 {
     }
 
     private function iterate_range() {
+        global $conf ;
         $hosts = $this->hosts();
         $net = ip2long($this->network()); //net_number2dec
         $db = new CS_SQLite();
-        for ($i = $net + 1; $i < $net + $hosts - 1; $i++) {
+        $e = $conf->dhcp_exclude;
+        for ($i = $net + $e + 1; $i < $net + $hosts - 1; $i++) {
             $addr = long2ip($i);
             $lastoct = explode('.', $addr)[3];
-            if ($lastoct == 0 || $lastoct == 255) { // skip zeros and 255s
+            if ($lastoct < 1 || $lastoct > 254) { // skip zeros and 255s
                 continue;
             }
             if ($db->exists('address', $addr)) {
