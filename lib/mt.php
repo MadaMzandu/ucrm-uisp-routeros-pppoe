@@ -8,6 +8,7 @@ $conf = include 'config.php';
 class MT {
 
     protected $data;
+    protected $post;
     protected $entity;
     protected $before;
     protected $device;

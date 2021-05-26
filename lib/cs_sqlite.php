@@ -57,7 +57,7 @@ class CS_SQLite{
     }
     
     public function move($data,$table='services'){
-        $this->edit($data,$table);
+        $this->insert($data,$table);
     }
     
     private function prep_update(){

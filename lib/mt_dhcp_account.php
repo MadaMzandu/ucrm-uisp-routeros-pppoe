@@ -9,6 +9,51 @@ class MT_DHCP_Account extends MT_Account {
         $this->path = '/ip/dhcp-server/lease/';
         $this->disableProperty = 'address-lists';
     }
+    
+    public function insert(){
+        if(parent::insert()){
+            $this->path = '/queue/simple/';
+            if($this->write($this->post->queue,'add')){
+                $this->set_message('service id:' 
+                        . $this->entity->id . ' was created');
+                $this->path = '/ip/dhcp-server/lease/';
+                return true ;
+            }
+        }
+        $this->set_error('failed to add queue');
+        $this->path = '/ip/dhcp-server/lease/';
+        return false ;
+    }
+    
+    public function delete(){
+        if(parent::delete()){
+            $this->path = '/queue/simple/';
+            if($this->write(false,'remove')){
+                $this->set_message('service id:' 
+                        . $this->entity->id . ' was deleted');
+                $this->path = '/ip/dhcp-server/lease/';
+                return true;
+            }            
+        }
+        $this->set_error('failed to delete queue');
+        $this->path = '/ip/dhcp-server/lease/';
+        return false;
+    }
+    
+    public function edit(){
+        if(parent::edit()){
+            $this->path = '/queue/simple/';
+            if($this->write($this->post->queue,'set')){
+                $this->set_message('service id:' 
+                        . $this->entity->id . ' was updated');
+                $this->path = '/ip/dhcp-server/lease/';
+                return true ;
+            }
+        }
+        $this->set_error('failed to update queue');
+        $this->path = '/ip/dhcp-server/lease/';
+        return false ;
+    }
 
     protected function data() {
         global $conf;
@@ -16,33 +61,55 @@ class MT_DHCP_Account extends MT_Account {
         if (!$ip) {
             return false;
         }
-        $list = $conf->active_list;
-        if ($this->entity->status != 1) {
-            $list = $conf->disabled_profile;
-        }
         $data = (object) array(
-                    'save' => (object) array(
+            'save' => $this->save_data($ip),
+            'device' => $this->lease_data($ip),
+            'queue' => $this->queue_data($ip),
+        );
+        if (in_array($this->data->changeType, ['edit', 'move'])) {
+            unset($data->save->ip);
+        }
+        return $data;
+    }
+    
+    protected function save_data($ip){
+        global $conf ;
+        return (object) array(
                         'id' => $this->entity->id,
                         'planId' => $this->entity->servicePlanId,
                         'clientId' => $this->entity->clientId,
                         'address' => $ip,
                         'status' => $this->entity->status,
                         'device' => $this->entity->{$conf->device_name_attr},
-                    ),
-                    'device' => (object) array(
-                        'address' => $ip,
-                        'mac-address' => $this->entity->{$conf->mac_addr_attr},
-                        'insert-queue-before' => 'bottom',
-                        'rate-limit' => $this->entity->downloadSpeed . "M/"
-                        . $this->entity->uploadSpeed . "M",
-                        'address-lists' => $list,
-                        'comment' => $this->entity->id.','.$this->data->clientName,
-                    ),
-        );
-        if (in_array($this->data->changeType,['edit','move'])) {
-            unset($data->save->ip);
+                    );
+    }
+
+    protected function lease_data($ip) {
+        global $conf ;
+        $list = $conf->active_list;
+        if ($this->entity->status != 1) {
+            $list = $conf->disabled_profile;
         }
-        return $data ;
+        return (object) array(
+                    'address' => $ip,
+                    'mac-address' => $this->entity->{$conf->mac_addr_attr},
+                    'insert-queue-before' => 'bottom',
+                    'address-lists' => $list,
+                    'comment' => $this->entity->id . ',' . $this->data->clientName,
+        );
+    }
+
+    protected function queue_data($ip) {
+        global $conf ;
+        $rate = $this->entity->downloadSpeed . "M/"
+                    . $this->entity->uploadSpeed . "M";
+        return (object) array(
+                    'name' => 'dhcp-<'.$this->entity->{$conf->mac_addr_attr}.'>',
+                    'target' => $ip,
+                    'max-limit' => $rate,
+                    'limit-at' => $rate,
+                    'comment' => $this->entity->id . ',' . $this->data->clientName,
+        );
     }
 
 }
