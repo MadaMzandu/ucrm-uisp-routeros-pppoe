@@ -6,7 +6,8 @@ return (object) array(
     'api_pass' => '',
     
     // UISP Token
-    'uisp_token' => '',
+    'uisp_url' => 'https://localhost/api/v1.0',
+    'uisp_token' => '11ce2a09-6eb7-44f8-9a68-2d6cac30776a',
     
     // file paths
     'devices_file' => 'json/devices.json', // used to map device name to device address
