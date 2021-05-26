@@ -18,6 +18,17 @@ class MT_PPPoE_Account extends MT_Account {
         }
         return false;
     }
+    
+    public function move(){
+        $id = $this->entity->id;
+        if(parent::move()){
+            $this->data->actionObj = 'before';
+            $this->disconnect();
+            $this->set_message('service id:' . $id . ' was updated');
+            return true;
+        }
+        return false;
+    }
 
     public function edit() {
         $id = $this->entity->id;
@@ -33,8 +44,8 @@ class MT_PPPoE_Account extends MT_Account {
         $api = $this->connect();
         if ($api) {
             $api->write('/ppp/active/print', false);
-            $api->write('?comment=' . $this->data->entityId);
-            $conns = $api->read();
+            $api->write('?comment');
+            $conns = $this->find($api->read());
             foreach ($conns as $conn) {
                 $api->write('/ppp/active/remove', false);
                 $api->write('=.id=' . $conn['.id']);
