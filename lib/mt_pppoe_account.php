@@ -76,6 +76,7 @@ class MT_PPPoE_Account extends MT_Account {
                     'save' => (object) array(
                         'id' => $this->entity->id,
                         'planId' => $this->entity->servicePlanId,
+                        'clientId' => $this->entity->clientId,
                         'address' => $ip,
                         'status' => $this->entity->status,
                         'device' => $this->entity->{$conf->device_name_attr},
