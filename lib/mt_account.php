@@ -23,7 +23,6 @@ class MT_Account extends MT {
     public function edit() {
         $id = $this->entity->id;
         $data = $this->data();
-        // unset($data->ip);
         if ($this->write($data->device, 'set')) {
             $this->set_message('service id:' . $id . ' was updated');
             $this->save($data->save, 'update');
@@ -103,7 +102,8 @@ class MT_Account extends MT {
             'hasOutage', 'lastInvoicedDate', 'suspensionReasonId', 'serviceChangeRequestId',
             'downloadSpeedOverride', 'uploadSpeedOverride', 'trafficShapingOverrideEnd',
             'trafficShapingOverrideEnabled',$conf->mac_addr_attr,$conf->device_name_attr,
-            $conf->pppoe_user_attr,$conf->pppoe_pass_attr,'unmsClientSiteId',];
+            $conf->pppoe_user_attr,$conf->pppoe_pass_attr,'unmsClientSiteId',
+            'clientName'];
     }
 
     protected function trim_attrbs() {

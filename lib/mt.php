@@ -32,7 +32,7 @@ class MT {
         $this->get_device();
         $ip = $this->device->ip;
         $api = new Routerosapi();
-        // $api->debug = true;
+        //$api->debug = true;
         if ($api->connect($ip, $conf->api_user, $conf->api_pass)) {
             return $api;
         }
@@ -125,8 +125,8 @@ class MT {
         }
         $id = $this->{$this->data->actionObj}->id;
         $api->write($this->path . 'print', false);
-        $api->write('?comment=' . $id);
-        $this->result = $api->read();
+        $api->write('?comment');
+        $this->result = $this->find($api->read());
         $api->disconnect();
         if (!$this->result) {
             $this->set_message('service id:' . $id . ' was not found');
@@ -134,6 +134,17 @@ class MT {
         }
         $this->set_message('service id:' . $id . ' was found');
         return true;
+    }
+    protected function find($result){
+        $e = sizeof($result);
+        for($i=0;$i<$e;$i++ ){
+            $item = $result[$i];
+            [$id] = explode(',', $item['comment']);
+            if($id == $this->{$this->data->actionObj}->id ){
+                return [$item];
+            }
+        }
+        return [];
     }
     
 }

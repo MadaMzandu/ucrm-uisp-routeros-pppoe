@@ -16,7 +16,7 @@ class MT_DHCP_Account extends MT_Account {
         if (!$ip) {
             return false;
         }
-        $list = '';
+        $list = $conf->active_list;
         if ($this->entity->status != 1) {
             $list = $conf->disabled_profile;
         }
@@ -35,7 +35,7 @@ class MT_DHCP_Account extends MT_Account {
                         'rate-limit' => $this->entity->downloadSpeed . "M/"
                         . $this->entity->uploadSpeed . "M",
                         'address-lists' => $list,
-                        'comment' => $this->entity->id,
+                        'comment' => $this->entity->id.','.$this->data->clientName,
                     ),
         );
         if (in_array($this->data->changeType,['edit','move'])) {
