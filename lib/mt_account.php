@@ -14,7 +14,7 @@ class MT_Account extends MT {
         if ($this->delete()) {
             $this->data->actionObj = 'entity';
             $this->insert();
-            $this->set_message('service id:' . $this->entity->id . ' was migrated');
+            $this->set_message('service id:' . $this->entity->id . ' was updated');
             return;
         }
         $this->set_error('unable to delete old service');
@@ -54,7 +54,7 @@ class MT_Account extends MT {
         }
         if ($this->write($data)) {            
             if($this->data->unsuspendFlag && $conf->unsuspend_date_fix){
-                $this->recreate();
+                $this->fix();
             }
             $this->set_message('service id:' . $id . ' was ' . $action);
             return true;
@@ -74,17 +74,20 @@ class MT_Account extends MT {
         return false;
     }
 
-    protected function recreate() {
+    protected function fix() {
         global $conf ;        
         $clientId = $this->data->extraData->entity->clientId;
         $id = $this->data->entityId;
         $this->trim();  // trim after aquiring data
         $u = new CS_UISP();
-        $u->request('/clients/services/' . $id . '/end', 'PATCH'); //end service
+        if($u->request('/clients/services/' . $id . '/end', 'PATCH')){//end service
+        
         $u->request('/clients/services/' . $id, 'DELETE'); //delete service
         sleep($conf->unsuspend_fix_wait);
         $u->request('/clients/' . $clientId . '/services', 'POST', $this->entity); //recreate service
-    }
+    
+        }
+        }
 
     protected function trim() {
         $vars = $this->trim_fields();

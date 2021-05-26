@@ -7,7 +7,7 @@ return (object) array(
     
     // UISP Token
     'uisp_url' => 'https://localhost/api/v1.0',
-    'uisp_token' => '11ce2a09-6eb7-44f8-9a68-2d6cac30776a',
+    'uisp_token' => '', // create token in unms and paste here
     
     // file paths
     'devices_file' => 'json/devices.json', // used to map device name to device address

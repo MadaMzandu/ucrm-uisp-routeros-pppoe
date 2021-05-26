@@ -31,8 +31,8 @@ class CS_Router {
 
         //select module
         $this->data->mode = $this->module();
-        $module = 'MT_'.$this->data->mode.'_Account';
-        
+        $module = 'MT_' . $this->data->mode . '_Account';
+
 
         // execute
         $service = new $module($this->data);
@@ -99,15 +99,20 @@ class CS_Router {
         $sanitize = 'sanitize_' . $this->data->changeType;
         $this->$sanitize();
     }
-    
-    private function set_client(){
+
+    private function set_client() {
+        $id = $this->data->extraData->entity->clientId;
+        $name = 'client'.$id;
         $u = new CS_UISP();
-        $client = (object) $u->request(
-                '/clients/'.$this->data->extraData->entity->clientId);
-        $this->data->clientName = $client->firstName.' '.$client->lastName ;
-        if($client->companyName){
-            $this->data->clientName = $client->companyName ;
+        $ret = $u->request('/clients/' . $id);
+        if ($ret) {
+            $client = (object) $ret ;
+            $name = $client->firstName . ' ' . $client->lastName;
+            if ($client->companyName) {
+                $name = $client->companyName;
+            }
         }
+        $this->data->clientName = $name;
     }
 
     private function sanitize_insert() {
@@ -131,8 +136,8 @@ class CS_Router {
             }
         }
     }
-    
-    private function sanitize_unsuspend(){
+
+    private function sanitize_unsuspend() {
         $this->sanitize_suspend();
     }
 
