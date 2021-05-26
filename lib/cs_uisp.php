@@ -1,15 +1,15 @@
 <?php
+$conf= include 'config.php';
 
 class CS_UISP {
-
-    const API_URL = 'https://localhost/api/v1.0';
-    const APP_KEY = '11ce2a09-6eb7-44f8-9a68-2d6cac30776a';
 
     protected $ch;
     protected $method;
     protected $post;
     protected $url;
     protected $data ;
+    protected $api ;
+    protected $key ;
 
     /**
      * @param string $url
@@ -18,6 +18,13 @@ class CS_UISP {
      *
      * @return array|null
      */
+    
+    public function __construct() {
+        global $conf ;
+        $this->api = $conf->uisp_url ;
+        $this->key = $conf->uisp_token;
+        
+    }
     public function request($url, $method = 'GET', $post = []) {
         $this->method = strtoupper($method);
         $this->ch = curl_init();
@@ -57,7 +64,7 @@ class CS_UISP {
                 CURLOPT_HTTPHEADER,
                 [
                     'Content-Type: application/json',
-                    sprintf('X-Auth-App-Key: %s', self::APP_KEY),
+                    sprintf('X-Auth-App-Key: %s', $this->key),
                 ]
         );
     }
@@ -68,7 +75,7 @@ class CS_UISP {
                 CURLOPT_URL,
                 sprintf(
                         '%s/%s',
-                        self::API_URL,
+                        $this->api,
                         $this->url
                 )
         );

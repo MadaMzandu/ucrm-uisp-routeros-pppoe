@@ -95,8 +95,19 @@ class CS_Router {
 
     private function sanitize() {
         $this->set_custom_attr();
+        $this->set_client();
         $sanitize = 'sanitize_' . $this->data->changeType;
         $this->$sanitize();
+    }
+    
+    private function set_client(){
+        $u = new CS_UISP();
+        $client = (object) $u->request(
+                '/clients/'.$this->data->extraData->entity->clientId);
+        $this->data->clientName = $client->firstName.' '.$client->lastName ;
+        if($client->companyName){
+            $this->data->clientName = $client->companyName ;
+        }
     }
 
     private function sanitize_insert() {
