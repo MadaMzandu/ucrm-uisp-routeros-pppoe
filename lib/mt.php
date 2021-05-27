@@ -33,7 +33,7 @@ class MT {
         $this->get_device();
         $ip = $this->device->ip;
         $api = new Routerosapi();
-        //$api->debug = true;
+        // $api->debug = true;
         if ($api->connect($ip, $conf->api_user, $conf->api_pass)) {
             return $api;
         }
