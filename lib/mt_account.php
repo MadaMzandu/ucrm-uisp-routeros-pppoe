@@ -139,7 +139,7 @@ class MT_Account extends MT {
 
     protected function save($data) {
         $db = new CS_SQLite();
-        $db->{$this->data->changeType}($data);
+        return $db->{$this->data->changeType}($data);
     }
 
     protected function clear() {
