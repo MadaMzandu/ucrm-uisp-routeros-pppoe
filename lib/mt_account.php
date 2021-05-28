@@ -147,4 +147,16 @@ class MT_Account extends MT {
         $db->delete($this->{$this->data->actionObj}->id);
     }
 
+    protected function save_data($ip) {
+        global $conf;
+        return (object) array(
+                    'id' => $this->entity->id,
+                    'planId' => $this->entity->servicePlanId,
+                    'clientId' => $this->entity->clientId,
+                    'address' => $ip,
+                    'status' => $this->entity->status,
+                    'device' => $this->entity->{$conf->device_name_attr},
+        );
+    }
+
 }

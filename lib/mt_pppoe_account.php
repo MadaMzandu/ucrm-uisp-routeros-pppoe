@@ -18,10 +18,10 @@ class MT_PPPoE_Account extends MT_Account {
         }
         return false;
     }
-    
-    public function move(){
+
+    public function move() {
         $id = $this->entity->id;
-        if(parent::move()){
+        if (parent::move()) {
             $this->data->actionObj = 'before';
             $this->disconnect();
             $this->set_message('service id:' . $id . ' was updated');
@@ -74,36 +74,33 @@ class MT_PPPoE_Account extends MT_Account {
     }
 
     protected function data() {
-        global $conf;  
         $ip = $this->ip_get();
         if (!$ip) {
             return false;
         }
+        $data = (object) array(
+                    'save' => $this->save_data($ip),
+                    'device' => $this->account_data($ip),
+        );
+        if (in_array($this->data->changeType, ['edit', 'move'])) {
+            unset($data->save->ip);
+        }
+        return $data;
+    }
+
+    private function account_data($ip) {
+        global $conf;
         $profile = $this->entity->servicePlanName;
         if ($this->entity->status != 1) {
             $profile = $conf->disabled_profile;
         }
-        $data = (object) array(
-                    'save' => (object) array(
-                        'id' => $this->entity->id,
-                        'planId' => $this->entity->servicePlanId,
-                        'clientId' => $this->entity->clientId,
-                        'address' => $ip,
-                        'status' => $this->entity->status,
-                        'device' => $this->entity->{$conf->device_name_attr},
-                    ),
-                    'device' => (object) array(
-                        'remote-address' => $ip,
-                        'name' => $this->entity->{$conf->pppoe_user_attr},
-                        'password' => $this->entity->{$conf->pppoe_pass_attr},
-                        'profile' => $profile,
-                        'comment' => $this->entity->id.','.$this->data->clientName,
-                    ),
+        return (object) array(
+                    'remote-address' => $ip,
+                    'name' => $this->entity->{$conf->pppoe_user_attr},
+                    'password' => $this->entity->{$conf->pppoe_pass_attr},
+                    'profile' => $profile,
+                    'comment' => $this->entity->id . ',' . $this->data->clientName,
         );
-        if(in_array($this->data->changeType,['edit','move'])){
-            unset($data->save->ip);
-        }
-        return $data ;
     }
 
 }
