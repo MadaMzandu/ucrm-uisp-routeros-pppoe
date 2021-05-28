@@ -129,7 +129,7 @@ The following php dependancies are required, on ubuntu/debian:
 
 6.  If you require dhcp provisioning as well then also add:
 
->     *DHCP MAC Address*
+>    *DHCP MAC Address*
 
 7.  Disabling the client visibility of the Custom attributes is a good
     idea.
