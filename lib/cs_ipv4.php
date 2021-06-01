@@ -11,12 +11,8 @@ Class CS_IPv4 {
     private $device; // device with pool
     private $pool; // active configured pool
 
-    public function __construct() {
-        
-    }
-
     public function assign($device = false) {
-        $this->device = $device;
+        $this->device = strtolower($device);
         $pool = $this->get_ppp_pool();
         if ($device) {
             $pool = $this->get_device_pool();
@@ -47,7 +43,7 @@ Class CS_IPv4 {
     private function find() {
         foreach ($this->pool as $range) {
             [$this->prefix, $this->len] = explode('/', $range);
-            if ($this->iterate_range()) {
+            if ($this->iterate_pool()) {
                 return true;
             }
         }
@@ -83,7 +79,7 @@ Class CS_IPv4 {
         return $addr;
     }
 
-    private function iterate_range() {
+    private function iterate_pool() {
         $hosts = $this->hosts();
         $net = ip2long($this->network()); //net_number2dec
         $db = new CS_SQLite();

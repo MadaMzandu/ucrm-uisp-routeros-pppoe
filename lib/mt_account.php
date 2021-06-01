@@ -14,7 +14,7 @@ class MT_Account extends MT {
         if ($this->delete()) {
             $this->data->actionObj = 'entity';
             $this->insert();
-            $this->set_message('service id:' . $this->entity->id . ' was migrated');
+            $this->set_message('service id:' . $this->entity->id . ' was updated');
             return;
         }
         $this->set_error('unable to delete old service');
@@ -22,10 +22,10 @@ class MT_Account extends MT {
 
     public function edit() {
         $id = $this->entity->id;
-        $data = $this->data();
-        if ($this->write($data->device, 'set')) {
+        $this->post = $this->data();
+        if ($this->write($this->post->device, 'set')) {
             $this->set_message('service id:' . $id . ' was updated');
-            $this->save($data->save, 'update');
+            $this->save($this->post->save, 'update');
             return true;
         }
         return false;
@@ -33,10 +33,10 @@ class MT_Account extends MT {
 
     public function insert() {
         $id = $this->entity->id;
-        $data = $this->data();
-        if ($this->write($data->device, 'add')) {
-            $this->set_message('service id:' . $id . ' was added');
-            $this->save($data->save);
+        $this->post = $this->data();
+        if ($this->write($this->post->device, 'add')) {
+            $this->set_message('service id:' . $id . ' was created');
+            $this->save($this->post->save);
             return true;
         }
         return false;
@@ -52,9 +52,9 @@ class MT_Account extends MT {
             $action = 'unsuspended';
             $data->{$this->disableProperty} = '';
         }
-        if ($this->write($data)) {            
-            if($this->data->unsuspendFlag && $conf->unsuspend_date_fix){
-                $this->recreate();
+        if ($this->write($data)) {
+            if ($this->data->unsuspendFlag && $conf->unsuspend_date_fix) {
+                $this->fix();
             }
             $this->set_message('service id:' . $id . ' was ' . $action);
             return true;
@@ -74,16 +74,17 @@ class MT_Account extends MT {
         return false;
     }
 
-    protected function recreate() {
-        global $conf ;        
+    protected function fix() {
+        global $conf;
         $clientId = $this->data->extraData->entity->clientId;
         $id = $this->data->entityId;
         $this->trim();  // trim after aquiring data
         $u = new CS_UISP();
-        $u->request('/clients/services/' . $id . '/end', 'PATCH'); //end service
-        $u->request('/clients/services/' . $id, 'DELETE'); //delete service
-        sleep($conf->unsuspend_fix_wait);
-        $u->request('/clients/' . $clientId . '/services', 'POST', $this->entity); //recreate service
+        if ($u->request('/clients/services/' . $id . '/end', 'PATCH')) {//end service
+            $u->request('/clients/services/' . $id, 'DELETE'); //delete service
+            sleep($conf->unsuspend_fix_wait);
+            $u->request('/clients/' . $clientId . '/services', 'POST', $this->entity); //recreate service
+        }
     }
 
     protected function trim() {
@@ -95,14 +96,14 @@ class MT_Account extends MT {
     }
 
     protected function trim_fields() {
-        global $conf ;
+        global $conf;
         return ['id', 'clientId', 'status', 'servicePlanId', 'invoicingStart',
             'hasIndividualPrice', 'totalPrice', 'currencyCode', 'servicePlanName',
             'servicePlanPrice', 'servicePlanType', 'downloadSpeed', 'uploadSpeed',
             'hasOutage', 'lastInvoicedDate', 'suspensionReasonId', 'serviceChangeRequestId',
             'downloadSpeedOverride', 'uploadSpeedOverride', 'trafficShapingOverrideEnd',
-            'trafficShapingOverrideEnabled',$conf->mac_addr_attr,$conf->device_name_attr,
-            $conf->pppoe_user_attr,$conf->pppoe_pass_attr,'unmsClientSiteId',
+            'trafficShapingOverrideEnabled', $conf->mac_addr_attr, $conf->device_name_attr,
+            $conf->pppoe_user_attr, $conf->pppoe_pass_attr, 'unmsClientSiteId',
             'clientName'];
     }
 
@@ -138,12 +139,24 @@ class MT_Account extends MT {
 
     protected function save($data) {
         $db = new CS_SQLite();
-        $db->{$this->data->changeType}($data);
+        return $db->{$this->data->changeType}($data);
     }
 
     protected function clear() {
         $db = new CS_SQLite();
         $db->delete($this->{$this->data->actionObj}->id);
+    }
+
+    protected function save_data($ip) {
+        global $conf;
+        return (object) array(
+                    'id' => $this->entity->id,
+                    'planId' => $this->entity->servicePlanId,
+                    'clientId' => $this->entity->clientId,
+                    'address' => $ip,
+                    'status' => $this->entity->status,
+                    'device' => $this->entity->{$conf->device_name_attr},
+        );
     }
 
 }

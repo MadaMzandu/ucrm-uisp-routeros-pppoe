@@ -57,6 +57,17 @@ The following php dependancies are required, on ubuntu/debian:
 
 \# sudo apt install php-sqlite3 php-curl
 
+## Upgrading
+1. When the files are unpacked, copy your old config.php,ids.json and gateways.json 
+   into the import directory.
+
+2. Run the import script \# *php import.php*
+   This will go through the configured devices and pull the previously provisioned 
+   pppoe accounts into the new module.
+
+3. The custom attribute "PPPoE Site Name" needs to be renamed to "Device Name". That's
+   it, you are ready to go.
+
 ## On Web Server
 
 1.  Install files into a path or a virtualhost on PHP enabled web server
@@ -118,7 +129,7 @@ The following php dependancies are required, on ubuntu/debian:
 
 6.  If you require dhcp provisioning as well then also add:
 
->     *DHCP MAC Address*
+>    *DHCP MAC Address*
 
 7.  Disabling the client visibility of the Custom attributes is a good
     idea.
