@@ -67,6 +67,9 @@ class MT_PPPoE_Account extends MT_Account {
         }
         if ($this->write($data)) {
             $this->disconnect();
+            if ($this->data->unsuspendFlag && $conf->unsuspend_date_fix) {
+                $this->fix();
+            }
             $this->set_message('service id:' . $id . ' was ' . $action);
             return true;
         }
