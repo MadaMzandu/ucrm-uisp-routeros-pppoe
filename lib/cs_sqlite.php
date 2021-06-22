@@ -7,6 +7,16 @@ class CS_SQLite {
     private $data;
     private $table;
     private $id;
+    
+    public function get_all($table='services'){
+        $sql = 'select * from '.$table ;
+        $res = $this->db->query($sql);
+        $return = [];
+        while($row = $res->fetchArray(SQLITE3_ASSOC)){
+            array_push($return,$row);
+        }
+        return $return;
+    }
 
     public function __construct($path = false) {
         global $conf;

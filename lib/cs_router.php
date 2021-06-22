@@ -6,6 +6,7 @@ include_once 'cs_file.php';
 include_once 'mt.php';
 include_once 'mt_pppoe_account.php';
 include_once 'mt_dhcp_account.php';
+include_once 'admin.php';
 
 class CS_Router {
 
@@ -16,12 +17,19 @@ class CS_Router {
 
     public function __construct(&$data) {
         $this->data = $data;
-        $this->entity = &$this->data->extraData->entity;
-        $this->before = &$this->data->extraData->entityBeforeEdit;
+        if ($data->changeType != 'admin') {
+            $this->entity = &$this->data->extraData->entity;
+            $this->before = &$this->data->extraData->entityBeforeEdit;
+        }
         $this->status = new stdClass();
     }
 
     public function route() {
+        //admin requests
+        if ($this->admin_request()) {
+            return;
+        }
+
         // validate data
         if (!$this->validate()) {
             return;
@@ -39,6 +47,17 @@ class CS_Router {
         $action = $this->data->changeType;
         $service->$action();
         $this->status = $service->status();
+    }
+
+    private function admin_request() {
+        if ($this->data->changeType != 'admin') {
+            return false;
+        }
+        $admin = new Admin($this->data);
+        $admin->exec();
+        $this->status = $admin->status();
+        $this->status->data = $admin->result();
+        return true;
     }
 
     private function validate() {
@@ -102,11 +121,11 @@ class CS_Router {
 
     private function set_client() {
         $id = $this->data->extraData->entity->clientId;
-        $name = 'client'.$id;
+        $name = 'client' . $id;
         $u = new CS_UISP();
         $ret = $u->request('/clients/' . $id);
         if ($ret) {
-            $client = (object) $ret ;
+            $client = (object) $ret;
             $name = $client->firstName . ' ' . $client->lastName;
             if ($client->companyName) {
                 $name = $client->companyName;
@@ -196,7 +215,9 @@ class CS_Router {
         return json_encode(
                 array(
                     'status' => $status,
-                    'message' => $this->status->message,));
+                    'message' => $this->status->message,
+                    'data' => $this->status->data,
+                    ));
     }
 
     private function set_message($msg) {
