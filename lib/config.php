@@ -29,6 +29,7 @@ return (object) array(
     'pppoe_pass_attr' => 'pppoePassword',
     'device_name_attr' => 'deviceName',
     'mac_addr_attr' => 'dhcpMacAddress',
+    'ip_addr_attr' => 'ipAddress',  //manually assigned ip address
 );
 
 
