@@ -14,7 +14,6 @@ class Admin {
     }
     
     public function exec(){
-        echo "in exec\n";
         $target = $this->data->target ;
         $action = $this->data->action ;
         $service = new $target($this->data->data);
