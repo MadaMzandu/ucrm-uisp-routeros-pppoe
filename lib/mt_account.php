@@ -104,7 +104,7 @@ class MT_Account extends MT {
             'downloadSpeedOverride', 'uploadSpeedOverride', 'trafficShapingOverrideEnd',
             'trafficShapingOverrideEnabled', $conf->mac_addr_attr, $conf->device_name_attr,
             $conf->pppoe_user_attr, $conf->pppoe_pass_attr, 'unmsClientSiteId',
-            'clientName'];
+            $conf->ip_addr_attr,'clientName'];
     }
 
     protected function trim_attrbs() {
