@@ -1,5 +1,11 @@
 # UISP/UCRM REST API for Mikrotik PPPoE + Static DHCP
 
+Per popular demand this plugin has been replaced with a more practical plugin
+found at https://github.com/MadaMzandu/uisp-ros-plugin. Amongst other things
+it supports a user friendly panel, contention ratios, creating profiles
+automatically, system utilities for backing up, restoring and reprovisioning 
+services.
+
 Many thanks to all the people that are testing and providing feeback. Because
 of your input progress is being made. This branch is the next version of this 
 plugin and includes your valuable input.
