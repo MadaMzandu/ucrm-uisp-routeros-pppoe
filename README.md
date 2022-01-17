@@ -1,195 +1,86 @@
-# UISP/UCRM REST API for Mikrotik PPPoE + Static DHCP
+# UISP/UCRM Plugin for RouterOs Services
 
-Per popular demand this plugin has been replaced with a more practical plugin
-found at https://github.com/MadaMzandu/uisp-ros-plugin. Amongst other things
-it supports a user friendly panel, contention ratios, creating profiles
-automatically, system utilities for backing up, restoring and reprovisioning 
-services.
-
-Many thanks to all the people that are testing and providing feeback. Because
-of your input progress is being made. This branch is the next version of this 
-plugin and includes your valuable input.
+So it finally came to be, a simple to install plugin replacement for the previous api based version.
 
 # New Features
 
-1. Now supports static DHCP as well as PPPoE.
+1. All new graphical interface for adding devices and managing settings
+2. One click installation via uisp plugin interface
+3. Contention ratios - the plugin will now create and manage parent queues to apply contention per router device.
+4. Automatic ppp profile creation - ppp profiles for service plans are now created/removed automatically
+5. Automatic ppp username and password generation
+6. Rebuild utility - the plugin can now re-sync itself and router devices against uisp. A new router can now be repopulated with accounts in minutes.
+7. Automatic backup - although the plugin can resync itself with uisp and managed routers, there is a now backup feature for added redundancy.
 
-2. Now has a backend for IP Management and future capabilities
+## Other features
+1. Real time provisioning, editing, suspending, unsuspending of accounts
+2. Real time migration of accounts between devices
+3. Supports both dhcp and pppoe and other ppp variants
 
-3. Now understands ipv4 cidr prefixes so pools can be defined in x.x.x.x/xx notation.
+# Installation
 
-4. Now has a work around fix for adjusting unsuspend date.
+1. Download the zip file in the src directory and upload into your Uisp > Settings > Plugins.
 
-# Introdution
+2. Enable the plugin and create the webhook.
 
-This is a REST PHP script aimed at integrating the Ubiquiti UISP/UCRM billing
-system with Mikrotik RouterOS devices for PPPoE and static DHCP services.
-Static DHCP means the client can only get an ip address lease if the MAC address 
-of the client is defined on the DHCP Server.
+# Configuration
 
-Unlike other integration options this solution does NOT use the plugin 
-extensibility of UISP but instead it uses the native webhook facility to provide 
-real time account provisioning.
+1. After enabling the plugin a menu icon will be installed for the plugin. Click on the icon and go to panel.
+2. In the devices tab add your mikrotik devices
+3. In the plans tab set the contention ratios for your plans or leave as 1:1 if not selling contention. If no plans are defined yet, define your plans in Uisp > Settings > Service Plans & Products
+4. In the settings tab go to the attributes tab and define the attributes that you want to use. You will need device name and mac address for dhcp, pppoe username,password and device name for pppoe. You can also set an ip address attribute if you wish to manually assign ip addresses for some accounts. You can also enable all the attributes if you are using both pppoe and dhcp.
+5. If using pppoe, in the Settings > General tab select if you want to use one pool for all your routers and specify the pool, or you want to use per router pool specified in the device.
+6. Thats it your are done.
 
-It is recommended to use the latest UISP/UCRM version available.
+# Upgrading
+If you have been using the previous api based version:
 
-# Features:
+1. After installation and configuration above disable the webhook for the previous api based version.
+2. Go to the settings tab > system and click rebuild to populate with accounts from previous api version.
 
-1.  Supports multiple RouterOS devices as gateways
+Please ensure that your mikrotik devices are added to the plugin and are online. The rebuild process is harmless and can be run any number of times. To verify if rebuild was successful go to the Devices tab and check the number of user accounts listed for each device.
 
-2.  Provides real time creation of service accounts
+# Using
 
-3.  Provides real time suspending / unsuspending (this should be an English
-    word) of service accounts.
+The custom attributes in Configution (4) should be listed in the form when creating or editing a service in Uisp.
+1. Fill the device name to specify the router for the clients account (see making a device dropdown list below)
+2. PPPoE username and Password to provision PPPoE.
+3. Mac address to provision DHCP instead.
+4. IP address to bypass the pool
 
-4.  Provides real time migration of service accounts between service plans.
+## Enabling automatic username and password generation
 
-5.  Allows real time migration of accounts between gateway devices.
+1. You need to go to panel > settings > general and enable the checkbox for this feature.
+2. When adding a service for a client leave the username and password blank to let plugin generate the field automatically, thats it.
 
-6.  Has self-managed IP address pool allowing persistent IP address assignment
-    which is more practical for monitoring client devices than using the dynamic
-    IP pool on the RouterOS devices
+Also note the following;
 
-# Installation Instructions
+1. A manually typed in username or password will override automatic generation for the field.
+2. Deleting the existing username or password will cause the plugin to generate a new value for the field
+3. The username is either client login, client lastname or client company name with service number appended.
 
-## Backup Old Configuration
+## Making a dropdown device list
 
-If upgrading from the legacy version backup the json directory so that you can
-roll back if something goes wrong.
+1. Go to crm settings > other > custom attributes.
+2. Create a new custom attribute with the following parameters - type: choice, Attribute type: service,Client Visible:no.
+3. Add the device names of your managed mikrotiks as values. You have to manually update this list of values when you add a new device.
+4. Next go to plugin panel > settings > attributes and in the device name field type in the name of the attribute created in step 2. 
+5. Click the save button when the panel finds the attribute.
 
-## PHP Dependencies
+There are two reasons why this can only be done manually if you are interested to know: 
 
-The following php dependancies are required, on ubuntu/debian:
+1. Plugins can query crm but crm cannot query plugins. And since custom attrbutes are part of crm it means they cannot pull values such as device names from the plugin.
+2. Why not push the list of devices to crm then? True this would be semi static fallback solution but crm API has not provided a call that can push values to an enumerated custom attribute so for now this will have to do.
 
-\# sudo apt install php-sqlite3 php-curl
+## Handling account suspension and unsuspension
 
-## Upgrading
-1. When the files are unpacked, copy your old config.php,ids.json and gateways.json 
-   into the import directory.
+The plugin provides four mikrotik parameters that allow customizing how disabled accounts are handled. These are:
+1. required : disabled profile - the name of a ppp profile to assign suspended accounts. Created automatically if missing.
+2. required : disabled address list - the name of firewall address list to assign suspended accounts. Firewall rules for the the list must be manually configured by admin. The rules can be nat rules to redirect and filter rules to drop.
+3. required : disabled rate - the rate limit to apply to disabled accounts. Automatically applied to ppp profile or dhcp queue. 
+4. optional : active address list - extra address list to apply to active accounts. Firewall rules must be manually configured by admin.
 
-2. Run the import script \# *php import.php*
-   This will go through the configured devices and pull the previously provisioned 
-   pppoe accounts into the new module.
 
-3. The custom attribute "PPPoE Site Name" needs to be renamed to "Device Name". That's
-   it, you are ready to go.
 
-## On Web Server
 
-1.  Install files into a path or a virtualhost on PHP enabled web server
 
-2.  Configure RouterOs username and password in lib/config.php
-
-3.  Make the the data directory and contents writeable by your www user.
-
-4.  Map device names to IP addresses in ‘json/devices.json’ and
-
-5.  Add dhcp address ranges for each device. You can add any number of comma 
-    separated x.x.x.x/xx prefixes. PPPoE address pool is in 
-    json/pppoe_pool.json. You can also add any number of x.x.x.x/xx prefixes
-    for pppoe.
-
-6.  Remember to secure API url with access list especially if running on a
-    publicly accessible webserver
-
-## On Mikrotik RouterOs Device/s
-
-### For PPPoE
-
-1.  Create PPP profiles matching the names of UCRM service plans (including
-    spaces if any)
-
-2.  Create a PPP profile named ‘disabled’ according to your disabling policy. 
-    You can also edit config.php to change the name of the disabled profile.
-
-### For PPPoE and/or DHCP
-
-3.  Create API username and password that was configured on the webserver in
-    config.php.
-
-4.  Remember to limit API account access to IP address of your webserver. Can’t
-    be too secure.
-
-## On UISP
-
-1.  In CRM Settings \>\> Webhook create an endpoint with the url to the above
-    webserver path
-
-2.  Make sure endpoint url has ending “/” e.g. http://127.0.0.1:8080/api/ to
-    avoid Apache/Nginx redirection.
-
-3.  Disable SSL checking of endpoint if using self signed certificate or pure
-    http
-
-4.  Test the webhook by clicking the test button. Response should return a json
-    response acknowledging the hook.
-
-5.  In CRM Settings \>\> Other create three text Custom Attributes of service
-    type as follows:
-
->    *PPPoE Username*
-
->    *PPPoE Password*
-
->    *Device Name*
-
-6.  If you require dhcp provisioning as well then also add:
-
->    *DHCP MAC Address*
-
-7.  Disabling the client visibility of the Custom attributes is a good
-    idea.
-
-8.  If one prefers to name these custom attributes differently, the
-    corresponding config.php entries must be updated to reflect the new labels.
-
-# Usage
-
-1.  At this point you should be able to add a service and provision the pppoe
-    account or DHCP leaese details at the bottom of the service account page.
-
-2.  Accounts are provisioned with a comment which helps to track the CRM
-    assigned service id. This is because in some cases the webhook does not send the 
-    previous state of custom attributes. Do not edit these comments to avoid 
-    orphaned accounts.
-    
-3.  Provision one of PPPoE or DHCP and NOT both per service. If both PPPoE username 
-    and DHCP mac address are entered, only DHCP will be provisioned.
-
-4.  Review the webhook request logs until you are confident of your setup and
-    usage
-
-5.  Some webhook requests are not applicable to the setup and will fail. This 
-    is normal behaviour.
-
-6.  Webhooks will fail with relevant message if you run out of IP addresses in 
-    the pool.
-
-7.  You can resend webhooks that fail to provision the first time e.g. Web
-    server was down or IP addresses were depleted when account was provisioned
-
-# Commercial Installation Assistance
-
-Commercial remote installation assistance is available.
-
-<https://columbus-inet-services.company.site/UISP-UCRM-Mikrotik-PPPoE-Integration-p300849115>
-
-Requirements – Ubuntu 18.04/20.04 + remote access for installation
-, Apache with modphp or Nginx with php-fpm.
-
-# Credits
-
-This software uses or depends on the following software by these developers with
-the greatest gratitude.
-
-Ben Menking – RouterOS API
-
-<https://github.com/BenMenking/routeros-api>
-
-Ubiquiti - UISP/UCRM/UNMS
-
-<https://ubnt.com>
-
-Mikrotik - RouterOS
-
-<https://mikrotik.com>
