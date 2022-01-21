@@ -1,5 +1,5 @@
 # NOTICE
-Please use https://github.com/MadaMzandu/uisp-ros-plugin as version is no longer supported and is here for historical reasons.
+Please use https://github.com/MadaMzandu/uisp-ros-plugin as this version is no longer supported and is here for historical reasons.
 
 # Credits
 
